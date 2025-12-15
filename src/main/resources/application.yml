@@ -1,0 +1,42 @@
+server:
+  port: 8082
+
+spring:
+  application:
+    name: resumematching
+
+  datasource:
+    url: jdbc:postgresql://localhost:5432/resumematch
+    username: postgres
+    password: nehasql
+    driver-class-name: org.postgresql.Driver
+
+  jpa:
+    hibernate:
+      ddl-auto: validate
+    show-sql: true
+    properties:
+      hibernate:
+        format_sql: true
+        dialect: org.hibernate.dialect.PostgreSQLDialect
+
+  flyway:
+    enabled: true
+    baseline-on-migrate: true
+
+  jackson:
+    serialization:
+      write-dates-as-timestamps: false
+
+logging:
+  level:
+    root: INFO
+    org.hibernate.SQL: DEBUG
+    org.hibernate.type.descriptor.sql.BasicBinder: TRACE
+    org.springframework.security: INFO
+
+security:
+  jwt:
+    secret: "THIS_IS_A_VERY_SECURE_SECRET_KEY_1234567890"
+    expiration: 86400000 # 24 hours in ms
+
