@@ -1,6 +1,8 @@
 package com.resume.resumematching.repository;
 
 import com.resume.resumematching.entity.ParsedDocument;
+import com.resume.resumematching.enums.FileType;
+import com.resume.resumematching.enums.UploadStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
@@ -8,17 +10,24 @@ import java.util.Optional;
 
 public interface ParsedDocumentRepository extends JpaRepository<ParsedDocument, Long> {
 
-    Optional<ParsedDocument> findByUploadIdAndTenantId(Long uploadId, Long tenantId);
-
-    List<ParsedDocument> findByTenantIdAndParsedTrueAndFileType(
+    Optional<ParsedDocument> findByUploadIdAndTenantIdAndStatusAndFileType(
+            Long uploadId,
             Long tenantId,
-            com.resume.resumematching.enums.FileType fileType
+            UploadStatus status,
+            FileType fileType
+    );
+
+    List<ParsedDocument> findByTenantIdAndStatusAndFileType(
+            Long tenantId,
+            UploadStatus status,
+            FileType fileType
     );
 
     default List<ParsedDocument> findParsedResumesByTenantId(Long tenantId) {
-        return findByTenantIdAndParsedTrueAndFileType(
+        return findByTenantIdAndStatusAndFileType(
                 tenantId,
-                com.resume.resumematching.enums.FileType.RESUME
+                UploadStatus.PARSED,
+                FileType.RESUME
         );
     }
 }

@@ -42,6 +42,9 @@ public class Upload {
     @Column(nullable = false, length = 20)
     private UploadStatus status;
 
+    @OneToOne(mappedBy = "upload", cascade = CascadeType.ALL)
+    private ParsedDocument parsedDocument;
+
     @Column(nullable = false, updatable = false)
     private LocalDateTime createdAt;
 

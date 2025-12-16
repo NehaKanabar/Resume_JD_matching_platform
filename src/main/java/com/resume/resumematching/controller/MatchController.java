@@ -15,6 +15,7 @@ public class MatchController {
     private final MatchService matchService;
 
     @PostMapping("/{jdUploadId}")
+    @PreAuthorize("hasRole('HR')")
     public ResponseEntity<MatchJob> runMatch(@PathVariable Long jdUploadId) {
         return ResponseEntity.ok(matchService.runMatch(jdUploadId));
     }
