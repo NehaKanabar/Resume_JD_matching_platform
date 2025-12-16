@@ -10,3 +10,4 @@ public interface PlanRepository extends JpaRepository<Plan, Long> {
     Optional<Plan> findByName(String name);
 }
 
+
