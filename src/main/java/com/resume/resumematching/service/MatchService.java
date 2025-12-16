@@ -1,5 +1,8 @@
 package com.resume.resumematching.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.resume.resumematching.context.TenantContext;
 import com.resume.resumematching.dto.match.MatchResultResponse;
 import com.resume.resumematching.entity.MatchJob;
@@ -29,6 +32,7 @@ public class MatchService {
     private final MatchResultRepository matchResultRepository;
     private final ParsedDocumentRepository parsedDocumentRepository;
     private final UsageCounterService usageCounterService;
+    private final ObjectMapper objectMapper;
 
     public MatchJob runMatch(Long jdUploadId) {
 
@@ -69,18 +73,14 @@ public class MatchService {
 
         for (ParsedDocument resume : resumes) {
 
+            JsonNode breakdownJson = createDummyBreakdown();
+
             MatchResult result = MatchResult.builder()
                     .matchJobId(savedJob.getId())
                     .tenantId(tenantId)
                     .resumeUploadId(resume.getUpload().getId())
                     .overallScore(BigDecimal.valueOf(50 + random.nextInt(50)))
-                    .breakdown("""
-                        {
-                          "skills_match": "70%",
-                          "experience_match": "65%",
-                          "education_match": "80%"
-                        }
-                        """)
+                    .breakdown(breakdownJson)   // ✅ JSONB SAFE
                     .createdAt(LocalDateTime.now())
                     .build();
 
@@ -112,5 +112,20 @@ public class MatchService {
                         r.getCreatedAt()
                 ))
                 .toList();
+    }
+
+    // 🔹 Temporary dummy breakdown (replace with ML later)
+    private JsonNode createDummyBreakdown() {
+        try {
+            return objectMapper.readTree("""
+                {
+                  "skills_match": "70%",
+                  "experience_match": "65%",
+                  "education_match": "80%"
+                }
+                """);
+        } catch (JsonProcessingException e) {
+            throw new RuntimeException("Failed to create breakdown JSON", e);
+        }
     }
 }

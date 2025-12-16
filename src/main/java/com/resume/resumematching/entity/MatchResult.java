@@ -1,7 +1,10 @@
 package com.resume.resumematching.entity;
 
+import com.fasterxml.jackson.databind.JsonNode;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -32,7 +35,8 @@ public class MatchResult {
     private BigDecimal overallScore;
 
     @Column(name = "breakdown_json", columnDefinition = "jsonb")
-    private String breakdown;
+    @JdbcTypeCode(SqlTypes.JSON)
+    private JsonNode breakdown;
 
     @Column(name = "created_at")
     private LocalDateTime createdAt;

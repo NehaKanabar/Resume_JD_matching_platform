@@ -1,10 +1,14 @@
 package com.resume.resumematching.entity;
 
 
+import com.fasterxml.jackson.databind.JsonNode;
 import com.resume.resumematching.enums.FileType;
 import com.resume.resumematching.enums.UploadStatus;
 import jakarta.persistence.*;
 import lombok.*;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
+
 import java.time.LocalDateTime;
 
 @Entity
@@ -39,8 +43,9 @@ public class ParsedDocument {
 
     /* ---------- PARSED DATA ---------- */
 
-    @Column(columnDefinition = "jsonb")
-    private String parsedData;
+    @Column(name = "parsed_data", columnDefinition = "jsonb")
+    @JdbcTypeCode(SqlTypes.JSON)
+    private JsonNode parsedData;
 
     /* ---------- STATUS ---------- */
 
