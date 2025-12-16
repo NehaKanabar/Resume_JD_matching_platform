@@ -16,64 +16,81 @@ public class UsageCounterService {
     private final UsageCounterRepository usageRepo;
     private final SubscriptionService subscriptionService;
 
-    /* ---------- COMMON ---------- */
+    /* ======================================================
+       COMMON
+       ====================================================== */
 
-    private UsageCounter getUsage(Long tenantId) {
-        Subscription sub = subscriptionService.getActiveSubscription(tenantId);
+    private UsageCounter getUsageForActiveSubscription(Long tenantId) {
 
-        if (sub.getStatus() != SubscriptionStatus.ACTIVE) {
+        Subscription subscription =
+                subscriptionService.getActiveSubscription(tenantId);
+
+        if (subscription.getStatus() != SubscriptionStatus.ACTIVE) {
             throw new IllegalStateException("Subscription is not active");
         }
 
-        return usageRepo.findBySubscription(sub)
-                .orElseThrow(() -> new IllegalStateException("Usage counter missing"));
+        return usageRepo.findBySubscription(subscription)
+                .orElseThrow(() ->
+                        new IllegalStateException("Usage counter not found for active subscription"));
     }
 
-    /* ---------- RESUME ---------- */
+    /* ======================================================
+       RESUME USAGE
+       ====================================================== */
 
     public void checkResumeLimit(Long tenantId) {
-        UsageCounter usage = getUsage(tenantId);
 
+        UsageCounter usage = getUsageForActiveSubscription(tenantId);
         int limit = usage.getSubscription().getPlan().getResumeLimit();
+
         if (usage.getResumeUsed() >= limit) {
             throw new IllegalStateException("Resume upload limit exceeded");
         }
     }
 
     public void incrementResume(Long tenantId) {
-        UsageCounter usage = getUsage(tenantId);
+
+        UsageCounter usage = getUsageForActiveSubscription(tenantId);
         usage.setResumeUsed(usage.getResumeUsed() + 1);
     }
 
-    /* ---------- JD ---------- */
+    /* ======================================================
+       JD USAGE
+       ====================================================== */
 
     public void checkJdLimit(Long tenantId) {
-        UsageCounter usage = getUsage(tenantId);
 
+        UsageCounter usage = getUsageForActiveSubscription(tenantId);
         int limit = usage.getSubscription().getPlan().getJdLimit();
+
         if (usage.getJdUsed() >= limit) {
             throw new IllegalStateException("JD upload limit exceeded");
         }
     }
 
     public void incrementJd(Long tenantId) {
-        UsageCounter usage = getUsage(tenantId);
+
+        UsageCounter usage = getUsageForActiveSubscription(tenantId);
         usage.setJdUsed(usage.getJdUsed() + 1);
     }
 
-    /* ---------- MATCH ---------- */
+    /* ======================================================
+       MATCH USAGE
+       ====================================================== */
 
     public void checkMatchLimit(Long tenantId) {
-        UsageCounter usage = getUsage(tenantId);
 
+        UsageCounter usage = getUsageForActiveSubscription(tenantId);
         int limit = usage.getSubscription().getPlan().getMatchLimit();
+
         if (usage.getMatchUsed() >= limit) {
             throw new IllegalStateException("Match limit exceeded");
         }
     }
 
     public void incrementMatch(Long tenantId) {
-        UsageCounter usage = getUsage(tenantId);
+
+        UsageCounter usage = getUsageForActiveSubscription(tenantId);
         usage.setMatchUsed(usage.getMatchUsed() + 1);
     }
 }
