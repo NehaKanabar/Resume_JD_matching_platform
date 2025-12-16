@@ -13,17 +13,23 @@ import com.resume.resumematching.repository.UploadRepository;
 import com.resume.resumematching.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
 @RequiredArgsConstructor
+@Transactional
 public class UploadService {
 
     private final UploadRepository uploadRepository;
     private final TenantRepository tenantRepository;
     private final UserRepository userRepository;
     private final UsageCounterService usageCounterService;
+
+    /* -----------------------------------------
+       UPLOAD FILE (RESUME / JD)
+    ----------------------------------------- */
 
     public UploadResponse uploadFile(UploadRequest request, String email) {
 
@@ -32,19 +38,20 @@ public class UploadService {
             throw new RuntimeException("Tenant context missing");
         }
 
+        // 🔐 PLAN LIMIT CHECK (BEFORE UPLOAD)
+        FileType fileType = FileType.valueOf(request.getFileType());
+
+        if (fileType == FileType.RESUME) {
+            usageCounterService.checkResumeLimit(tenantId);
+        } else if (fileType == FileType.JD) {
+            usageCounterService.checkJdLimit(tenantId);
+        }
+
         Tenant tenant = tenantRepository.findById(tenantId)
                 .orElseThrow(() -> new RuntimeException("Tenant not found"));
 
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));
-
-        FileType fileType;
-        try {
-            fileType = FileType.valueOf(request.getFileType().toUpperCase());
-        } catch (IllegalArgumentException ex) {
-            throw new RuntimeException("Invalid file type: " + request.getFileType());
-        }
-        usageCounterService.checkResumeLimit(tenantId);
 
         Upload upload = Upload.builder()
                 .tenant(tenant)
@@ -52,12 +59,17 @@ public class UploadService {
                 .fileType(fileType)
                 .filePath(request.getFilePath())
                 .fileSize(request.getFileSize())
-                .status(UploadStatus.UPLOADED) // initial state
+                .status(UploadStatus.UPLOADED)
                 .build();
 
         Upload saved = uploadRepository.save(upload);
 
-        usageCounterService.incrementResume(tenantId);
+        // ✅ INCREMENT USAGE (AFTER SUCCESSFUL UPLOAD)
+        if (fileType == FileType.RESUME) {
+            usageCounterService.incrementResume(tenantId);
+        } else if (fileType == FileType.JD) {
+            usageCounterService.incrementJd(tenantId);
+        }
 
         return UploadResponse.builder()
                 .id(saved.getId())
@@ -69,24 +81,24 @@ public class UploadService {
                 .build();
     }
 
+    /* -----------------------------------------
+       GET ALL UPLOADS (TENANT-WISE)
+    ----------------------------------------- */
+
     public List<UploadResponse> getTenantUploads() {
 
         Long tenantId = TenantContext.getTenantId();
-        if (tenantId == null) {
-            throw new RuntimeException("Tenant context missing");
-        }
 
         return uploadRepository.findByTenantId(tenantId)
                 .stream()
-                .map(upload -> UploadResponse.builder()
-                        .id(upload.getId())
-                        .fileType(upload.getFileType().name())
-                        .filePath(upload.getFilePath())
-                        .fileSize(upload.getFileSize())
-                        .status(upload.getStatus().name())
-                        .createdAt(upload.getCreatedAt())
-                        .build()
-                )
+                .map(upload -> new UploadResponse(
+                        upload.getId(),
+                        upload.getFilePath(),
+                        upload.getFileSize(),
+                        upload.getFileType().name(),
+                        upload.getStatus().name(),
+                        upload.getCreatedAt()
+                ))
                 .toList();
     }
 }
