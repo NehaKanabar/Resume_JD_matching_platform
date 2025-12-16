@@ -23,6 +23,7 @@ public class UploadService {
     private final UploadRepository uploadRepository;
     private final TenantRepository tenantRepository;
     private final UserRepository userRepository;
+    private final UsageCounterService usageCounterService;
 
     public UploadResponse uploadFile(UploadRequest request, String email) {
 
@@ -43,6 +44,7 @@ public class UploadService {
         } catch (IllegalArgumentException ex) {
             throw new RuntimeException("Invalid file type: " + request.getFileType());
         }
+        usageCounterService.checkResumeLimit(tenantId);
 
         Upload upload = Upload.builder()
                 .tenant(tenant)
@@ -54,6 +56,8 @@ public class UploadService {
                 .build();
 
         Upload saved = uploadRepository.save(upload);
+
+        usageCounterService.incrementResume(tenantId);
 
         return UploadResponse.builder()
                 .id(saved.getId())
