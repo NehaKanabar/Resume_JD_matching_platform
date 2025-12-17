@@ -1,5 +1,7 @@
 package com.resume.resumematching.dto.upload;
 
+import com.resume.resumematching.enums.FileType;
+import com.resume.resumematching.enums.UploadStatus;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -17,8 +19,7 @@ public class UploadResponse {
     private Long id;
     private String filePath;
     private Long fileSize;
-    private String fileType;
-    private String status;
+    private FileType fileType;
+    private UploadStatus status;
     private LocalDateTime createdAt;
 }
-

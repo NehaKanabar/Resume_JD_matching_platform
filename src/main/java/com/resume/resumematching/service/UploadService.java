@@ -1,7 +1,6 @@
 package com.resume.resumematching.service;
 
 import com.resume.resumematching.context.TenantContext;
-import com.resume.resumematching.dto.upload.UploadRequest;
 import com.resume.resumematching.dto.upload.UploadResponse;
 import com.resume.resumematching.entity.Tenant;
 import com.resume.resumematching.entity.Upload;
@@ -14,13 +13,21 @@ import com.resume.resumematching.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.List;
+import java.util.UUID;
 
 @Service
 @RequiredArgsConstructor
 @Transactional
 public class UploadService {
+
+    private static final String BASE_DIR = "uploads";
 
     private final UploadRepository uploadRepository;
     private final TenantRepository tenantRepository;
@@ -28,22 +35,22 @@ public class UploadService {
     private final UsageCounterService usageCounterService;
 
     /* -----------------------------------------
-       UPLOAD FILE (RESUME / JD)
+       UPLOAD FILE (MULTIPART)
     ----------------------------------------- */
-
-    public UploadResponse uploadFile(UploadRequest request, String email) {
-
+    public UploadResponse uploadFile(
+            MultipartFile file,
+            FileType fileType,
+            String email
+    ) {
         Long tenantId = TenantContext.getTenantId();
         if (tenantId == null) {
             throw new RuntimeException("Tenant context missing");
         }
 
-        // 🔐 PLAN LIMIT CHECK (BEFORE UPLOAD)
-        FileType fileType = FileType.valueOf(request.getFileType());
-
+        // 🔐 PLAN LIMIT CHECK
         if (fileType == FileType.RESUME) {
             usageCounterService.checkResumeLimit(tenantId);
-        } else if (fileType == FileType.JD) {
+        } else {
             usageCounterService.checkJdLimit(tenantId);
         }
 
@@ -53,38 +60,85 @@ public class UploadService {
         User user = userRepository.findByEmail(email)
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
+        validateFile(file);
+
+        // 📁 Save file to filesystem
+        String filePath = storeFile(file, tenantId, fileType);
+
         Upload upload = Upload.builder()
                 .tenant(tenant)
-                .user(user)
+                .user(user)                 // ✅ FIXED (no more NULL user_id)
                 .fileType(fileType)
-                .filePath(request.getFilePath())
-                .fileSize(request.getFileSize())
+                .filePath(filePath)
+                .fileSize(file.getSize())
                 .status(UploadStatus.UPLOADED)
                 .build();
 
         Upload saved = uploadRepository.save(upload);
 
-        // ✅ INCREMENT USAGE (AFTER SUCCESSFUL UPLOAD)
+        // ✅ Increment usage AFTER success
         if (fileType == FileType.RESUME) {
             usageCounterService.incrementResume(tenantId);
-        } else if (fileType == FileType.JD) {
+        } else {
             usageCounterService.incrementJd(tenantId);
         }
 
         return UploadResponse.builder()
                 .id(saved.getId())
-                .fileType(saved.getFileType().name())
+                .fileType(saved.getFileType())
                 .filePath(saved.getFilePath())
                 .fileSize(saved.getFileSize())
-                .status(saved.getStatus().name())
+                .status(saved.getStatus())
                 .createdAt(saved.getCreatedAt())
                 .build();
     }
 
     /* -----------------------------------------
-       GET ALL UPLOADS (TENANT-WISE)
+       HELPERS
     ----------------------------------------- */
 
+    private void validateFile(MultipartFile file) {
+        if (file.isEmpty()) {
+            throw new RuntimeException("File is empty");
+        }
+
+        String filename = file.getOriginalFilename();
+        if (filename == null ||
+                !(filename.endsWith(".pdf")
+                        || filename.endsWith(".doc")
+                        || filename.endsWith(".docx"))) {
+            throw new RuntimeException("Invalid file type");
+        }
+    }
+
+    private String storeFile(MultipartFile file, Long tenantId, FileType fileType) {
+        try {
+            String extension = file.getOriginalFilename()
+                    .substring(file.getOriginalFilename().lastIndexOf("."));
+
+            String fileName = UUID.randomUUID() + extension;
+
+            Path dir = Paths.get(BASE_DIR, tenantId.toString(), fileType.name());
+            Files.createDirectories(dir);
+
+            Path fullPath = dir.resolve(fileName);
+            Files.copy(
+                    file.getInputStream(),
+                    fullPath,
+                    StandardCopyOption.REPLACE_EXISTING
+            );
+
+            // store relative path
+            return BASE_DIR + "/" + tenantId + "/" + fileType.name() + "/" + fileName;
+
+        } catch (Exception e) {
+            throw new RuntimeException("File storage failed", e);
+        }
+    }
+
+    /* -----------------------------------------
+       GET UPLOADS (TENANT-WISE)
+    ----------------------------------------- */
     public List<UploadResponse> getTenantUploads() {
 
         Long tenantId = TenantContext.getTenantId();
@@ -95,8 +149,8 @@ public class UploadService {
                         upload.getId(),
                         upload.getFilePath(),
                         upload.getFileSize(),
-                        upload.getFileType().name(),
-                        upload.getStatus().name(),
+                        upload.getFileType(),
+                        upload.getStatus(),
                         upload.getCreatedAt()
                 ))
                 .toList();
