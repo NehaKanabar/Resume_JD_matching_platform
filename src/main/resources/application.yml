@@ -40,3 +40,5 @@ security:
     secret: "THIS_IS_A_VERY_SECURE_SECRET_KEY_1234567890"
     expiration: 86400000 # 24 hours in ms
 
+stripe:
+  secret-key: sk_test_xxxxxxxxxxxxxxxxx

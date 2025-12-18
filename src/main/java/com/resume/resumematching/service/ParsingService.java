@@ -29,11 +29,11 @@ public class ParsingService {
         Upload upload = uploadRepository.findById(uploadId)
                 .orElseThrow(() -> new RuntimeException("Upload not found"));
 
-        // 1️⃣ Update upload status → PARSING
+        // Update upload status → PARSING
         upload.setStatus(UploadStatus.PARSING);
 
         try {
-            // 2️⃣ Simulated parser output (JSON)
+            // Simulated parser output (JSON)
             JsonNode parsedJsonNode = objectMapper.readTree(
                     upload.getFileType() == FileType.RESUME
                             ? """
@@ -52,7 +52,7 @@ public class ParsingService {
                                 """
             );
 
-            // 3️⃣ Save parsed document
+            // Save parsed document
             ParsedDocument parsedDocument = ParsedDocument.builder()
                     .upload(upload)
                     .tenantId(upload.getTenant().getId())
@@ -64,11 +64,11 @@ public class ParsingService {
 
             parsedDocumentRepository.save(parsedDocument);
 
-            // 4️⃣ Update upload status → PARSED
+            // Update upload status → PARSED
             upload.setStatus(UploadStatus.PARSED);
 
         } catch (JsonProcessingException e) {
-            // 5️⃣ If parsing fails
+            // If parsing fails
             upload.setStatus(UploadStatus.FAILED);
             throw new RuntimeException("Failed to parse uploaded document", e);
         }

@@ -23,18 +23,18 @@ public class UserService {
     private final TenantRepository tenantRepository;
     private final PasswordEncoder passwordEncoder;
 
-    public List<User> getUsers() {
-
-        Long tenantId = TenantContext.getTenantId();
-
-        // SUPERUSER → all users
-        if (tenantId == null) {
-            return userRepository.findAll();
-        }
-
-        // ADMIN / HR → only own tenant users
-        return userRepository.findByTenantId(tenantId);
-    }
+//    public List<User> getUsers() {
+//
+//        Long tenantId = TenantContext.getTenantId();
+//
+//        // SUPERUSER → all users
+//        if (tenantId == null) {
+//            return userRepository.findAll();
+//        }
+//
+//        // ADMIN / HR → only own tenant users
+//        return userRepository.findByTenantId(tenantId);
+//    }
 
     @Transactional
     public void createHrUser(CreateHrUserRequest request) {

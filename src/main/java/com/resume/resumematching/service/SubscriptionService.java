@@ -3,22 +3,18 @@ package com.resume.resumematching.service;
 import com.resume.resumematching.context.TenantContext;
 import com.resume.resumematching.dto.subscription.CreateSubscriptionRequest;
 import com.resume.resumematching.dto.subscription.SubscriptionResponse;
-import com.resume.resumematching.entity.Plan;
-import com.resume.resumematching.entity.Subscription;
-import com.resume.resumematching.entity.Tenant;
-import com.resume.resumematching.entity.UsageCounter;
+import com.resume.resumematching.entity.*;
 import com.resume.resumematching.enums.BillingCycle;
+import com.resume.resumematching.enums.InvoiceStatus;
 import com.resume.resumematching.enums.SubscriptionStatus;
-import com.resume.resumematching.repository.PlanRepository;
-import com.resume.resumematching.repository.SubscriptionRepository;
-import com.resume.resumematching.repository.TenantRepository;
-import com.resume.resumematching.repository.UsageCounterRepository;
+import com.resume.resumematching.repository.*;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 
 @Service
@@ -30,10 +26,7 @@ public class SubscriptionService {
     private final TenantRepository tenantRepository;
     private final PlanRepository planRepository;
     private final UsageCounterRepository usageCounterRepository;
-
-    /* -------------------------------------------------
-       CREATE SUBSCRIPTION (ADMIN ONLY)
-    ------------------------------------------------- */
+    private final InvoiceRepository invoiceRepository;
 
     public SubscriptionResponse createSubscription(CreateSubscriptionRequest request) {
 
@@ -42,7 +35,7 @@ public class SubscriptionService {
             throw new RuntimeException("Superuser cannot subscribe to plans");
         }
 
-        // 🔐 ROLE CHECK — ADMIN ONLY
+        // ROLE CHECK — ADMIN ONLY
         if (!SecurityContextHolder.getContext()
                 .getAuthentication()
                 .getAuthorities()
@@ -57,7 +50,7 @@ public class SubscriptionService {
         Plan plan = planRepository.findById(request.getPlanId())
                 .orElseThrow(() -> new RuntimeException("Plan not found"));
 
-        // 1️⃣ Expire existing active subscription
+        // Expire existing active subscription
         subscriptionRepository
                 .findByTenantIdAndStatus(tenantId, SubscriptionStatus.ACTIVE)
                 .ifPresent(existing -> {
@@ -65,13 +58,13 @@ public class SubscriptionService {
                     subscriptionRepository.save(existing);
                 });
 
-        // 2️⃣ Calculate dates
+        // Calculate subscription dates
         LocalDate startDate = LocalDate.now();
         LocalDate endDate = request.getBillingCycle() == BillingCycle.YEARLY
                 ? startDate.plusYears(1)
                 : startDate.plusMonths(1);
 
-        // 3️⃣ Create subscription
+        // Create new subscription
         Subscription subscription = Subscription.builder()
                 .tenant(tenant)
                 .plan(plan)
@@ -80,12 +73,12 @@ public class SubscriptionService {
                 .endDate(endDate)
                 .build();
 
-        Subscription saved = subscriptionRepository.save(subscription);
+        Subscription savedSubscription = subscriptionRepository.save(subscription);
 
-        // 4️⃣ Create usage counter (RESET USAGE)
+        // Reset usage counter
         UsageCounter usage = UsageCounter.builder()
                 .tenant(tenant)
-                .subscription(saved)
+                .subscription(savedSubscription)
                 .resumeUsed(0)
                 .jdUsed(0)
                 .matchUsed(0)
@@ -93,19 +86,32 @@ public class SubscriptionService {
 
         usageCounterRepository.save(usage);
 
+        // CREATE FIRST INVOICE
+        BigDecimal amount = request.getBillingCycle() == BillingCycle.YEARLY
+                ? plan.getPriceYearly()
+                : plan.getPriceMonthly();
+
+        Invoice invoice = Invoice.builder()
+                .tenantId(tenantId)
+                .subscriptionId(savedSubscription.getId())
+                .amount(amount)
+                .status(InvoiceStatus.PENDING)
+                .dueDate(LocalDate.now().plusDays(7))
+                .build();
+
+        invoiceRepository.save(invoice);
+
         return new SubscriptionResponse(
-                saved.getId(),
+                savedSubscription.getId(),
                 tenantId,
                 plan.getName(),
-                saved.getStatus(),
-                saved.getStartDate(),
-                saved.getEndDate()
+                savedSubscription.getStatus(),
+                savedSubscription.getStartDate(),
+                savedSubscription.getEndDate()
         );
     }
 
-    /* -------------------------------------------------
-       FETCH ACTIVE SUBSCRIPTION (USED BY USAGE CHECKS)
-    ------------------------------------------------- */
+     //  FETCH ACTIVE SUBSCRIPTION (USAGE CHECKS)
 
     public Subscription getActiveSubscription(Long tenantId) {
 
@@ -113,7 +119,7 @@ public class SubscriptionService {
                 .findByTenantIdAndStatus(tenantId, SubscriptionStatus.ACTIVE)
                 .orElseThrow(() -> new RuntimeException("No active subscription"));
 
-        // ⛔ AUTO-EXPIRE IF DATE PASSED
+        // AUTO-EXPIRE IF DATE PASSED
         if (subscription.getEndDate().isBefore(LocalDate.now())) {
             subscription.setStatus(SubscriptionStatus.EXPIRED);
             subscriptionRepository.save(subscription);

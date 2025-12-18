@@ -15,7 +15,7 @@ public class TenantController {
 
     private final TenantService tenantService;
 
-    // ✅ SUPERUSER creates tenant + admin
+    // SUPERUSER creates tenant + admin
     @PostMapping
     @PreAuthorize("hasRole('SUPERUSER')")
     public ResponseEntity<String> createTenant(
@@ -25,7 +25,7 @@ public class TenantController {
         return ResponseEntity.ok("Tenant and Admin created successfully");
     }
 
-    // ✅ SUPERUSER can suspend tenant
+    // SUPERUSER can suspend tenant
     @PatchMapping("/{id}/suspend")
     @PreAuthorize("hasRole('SUPERUSER')")
     public ResponseEntity<Void> suspendTenant(@PathVariable Long id) {
@@ -33,7 +33,7 @@ public class TenantController {
         return ResponseEntity.noContent().build();
     }
 
-    // ✅ SUPERUSER can delete tenant (soft delete recommended)
+    // SUPERUSER can delete tenant (soft delete recommended)
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('SUPERUSER')")
     public ResponseEntity<Void> deleteTenant(@PathVariable Long id) {

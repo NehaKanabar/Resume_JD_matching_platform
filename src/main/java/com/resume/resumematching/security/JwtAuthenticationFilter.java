@@ -39,25 +39,25 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
         try {
             final String authHeader = request.getHeader("Authorization");
 
-            // 1️⃣ Check Authorization header
+            // Check Authorization header
             if (authHeader == null || !authHeader.startsWith("Bearer ")) {
                 filterChain.doFilter(request, response);
                 return;
             }
 
-            // 2️⃣ Extract JWT
+            // Extract JWT
             String jwt = authHeader.substring(7);
             String email = jwtService.extractEmail(jwt);
 
-            // 3️⃣ Extract tenantId from JWT
+            // Extract tenantId from JWT
             Long tenantId = jwtService.extractTenantId(jwt);
 
-            // 4️⃣ Store tenantId in TenantContext (SUPERUSER → null)
+            // Store tenantId in TenantContext (SUPERUSER → null)
             if (tenantId != null) {
                 TenantContext.setTenantId(tenantId);
             }
 
-            // 5️⃣ Authenticate user
+            // Authenticate user
             if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
 
                 UserDetails userDetails =
@@ -83,11 +83,11 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 }
             }
 
-            // 6️⃣ Continue request
+            // Continue request
             filterChain.doFilter(request, response);
 
         } finally {
-            // 7️⃣ VERY IMPORTANT — clear tenant after request
+            // clear tenant after request
             TenantContext.clear();
         }
     }

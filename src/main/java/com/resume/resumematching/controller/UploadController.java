@@ -19,9 +19,8 @@ public class UploadController {
 
     private final UploadService uploadService;
 
-    /* -----------------------------------------
-       UPLOAD RESUME / JD (MULTIPART)
-    ----------------------------------------- */
+    //   UPLOAD RESUME / JD (MULTIPART)
+
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     public ResponseEntity<UploadResponse> upload(
             @RequestParam("file") MultipartFile file,
@@ -37,9 +36,8 @@ public class UploadController {
         return ResponseEntity.ok(response);
     }
 
-    /* -----------------------------------------
-       GET ALL UPLOADS (TENANT-WISE)
-    ----------------------------------------- */
+     //  GET ALL UPLOADS (TENANT-WISE)
+
     @GetMapping
     public ResponseEntity<List<UploadResponse>> getUploads() {
         return ResponseEntity.ok(uploadService.getTenantUploads());

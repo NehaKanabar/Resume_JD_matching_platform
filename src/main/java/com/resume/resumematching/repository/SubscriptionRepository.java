@@ -12,4 +12,6 @@ public interface SubscriptionRepository extends JpaRepository<Subscription, Long
     Optional<Subscription> findByTenantIdAndStatus(Long tenantId, SubscriptionStatus status);
 
     List<Subscription> findByTenantId(Long tenantId);
+
+    List<Subscription> findByStatus(SubscriptionStatus status);
 }

@@ -14,6 +14,6 @@ public class UserResponse {
     private String email;
     private Role role;
     private boolean disabled;
-    private Long tenantId;   // IMPORTANT
+    private Long tenantId;
     private LocalDateTime createdAt;
 }

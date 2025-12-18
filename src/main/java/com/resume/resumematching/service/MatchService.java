@@ -38,10 +38,10 @@ public class MatchService {
 
         Long tenantId = TenantContext.getTenantId();
 
-        // 🔐 PLAN LIMIT CHECK
+        // PLAN LIMIT CHECK
         usageCounterService.checkMatchLimit(tenantId);
 
-        // ✅ Validate JD is PARSED
+        // Validate JD is PARSED
         ParsedDocument jd = parsedDocumentRepository
                 .findByUploadIdAndTenantIdAndStatusAndFileType(
                         jdUploadId,
@@ -51,7 +51,7 @@ public class MatchService {
                 )
                 .orElseThrow(() -> new RuntimeException("JD not parsed"));
 
-        // ✅ Fetch parsed resumes
+        // Fetch parsed resumes
         List<ParsedDocument> resumes =
                 parsedDocumentRepository.findParsedResumesByTenantId(tenantId);
 
@@ -59,7 +59,7 @@ public class MatchService {
             throw new RuntimeException("No parsed resumes available");
         }
 
-        // ✅ Create match job
+        // Create match job
         MatchJob job = MatchJob.builder()
                 .tenantId(tenantId)
                 .jdUploadId(jdUploadId)
@@ -80,19 +80,19 @@ public class MatchService {
                     .tenantId(tenantId)
                     .resumeUploadId(resume.getUpload().getId())
                     .overallScore(BigDecimal.valueOf(50 + random.nextInt(50)))
-                    .breakdown(breakdownJson)   // ✅ JSONB SAFE
+                    .breakdown(breakdownJson)   // JSONB SAFE
                     .createdAt(LocalDateTime.now())
                     .build();
 
             matchResultRepository.save(result);
         }
 
-        // ✅ Mark job completed
+        // Mark job completed
         savedJob.setStatus(MatchJobStatus.DONE);
         savedJob.setCompletedAt(LocalDateTime.now());
         matchJobRepository.save(savedJob);
 
-        // ✅ Increment usage AFTER success
+        //  Increment usage AFTER success
         usageCounterService.incrementMatch(tenantId);
 
         return savedJob;
@@ -114,7 +114,7 @@ public class MatchService {
                 .toList();
     }
 
-    // 🔹 Temporary dummy breakdown (replace with ML later)
+    // Temporary dummy breakdown (replace with ML later)
     private JsonNode createDummyBreakdown() {
         try {
             return objectMapper.readTree("""

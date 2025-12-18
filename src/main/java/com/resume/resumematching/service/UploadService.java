@@ -34,9 +34,7 @@ public class UploadService {
     private final UserRepository userRepository;
     private final UsageCounterService usageCounterService;
 
-    /* -----------------------------------------
-       UPLOAD FILE (MULTIPART)
-    ----------------------------------------- */
+    //   UPLOAD FILE (MULTIPART)
     public UploadResponse uploadFile(
             MultipartFile file,
             FileType fileType,
@@ -47,7 +45,7 @@ public class UploadService {
             throw new RuntimeException("Tenant context missing");
         }
 
-        // 🔐 PLAN LIMIT CHECK
+        // PLAN LIMIT CHECK
         if (fileType == FileType.RESUME) {
             usageCounterService.checkResumeLimit(tenantId);
         } else {
@@ -62,12 +60,12 @@ public class UploadService {
 
         validateFile(file);
 
-        // 📁 Save file to filesystem
+        // Save file to filesystem
         String filePath = storeFile(file, tenantId, fileType);
 
         Upload upload = Upload.builder()
                 .tenant(tenant)
-                .user(user)                 // ✅ FIXED (no more NULL user_id)
+                .user(user)
                 .fileType(fileType)
                 .filePath(filePath)
                 .fileSize(file.getSize())
@@ -76,7 +74,7 @@ public class UploadService {
 
         Upload saved = uploadRepository.save(upload);
 
-        // ✅ Increment usage AFTER success
+        // Increment usage AFTER success
         if (fileType == FileType.RESUME) {
             usageCounterService.incrementResume(tenantId);
         } else {
@@ -92,10 +90,6 @@ public class UploadService {
                 .createdAt(saved.getCreatedAt())
                 .build();
     }
-
-    /* -----------------------------------------
-       HELPERS
-    ----------------------------------------- */
 
     private void validateFile(MultipartFile file) {
         if (file.isEmpty()) {
@@ -136,9 +130,7 @@ public class UploadService {
         }
     }
 
-    /* -----------------------------------------
-       GET UPLOADS (TENANT-WISE)
-    ----------------------------------------- */
+    //   GET UPLOADS (TENANT-WISE)
     public List<UploadResponse> getTenantUploads() {
 
         Long tenantId = TenantContext.getTenantId();

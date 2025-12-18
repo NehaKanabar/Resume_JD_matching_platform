@@ -16,10 +16,7 @@ public class UsageCounterService {
     private final UsageCounterRepository usageRepo;
     private final SubscriptionService subscriptionService;
 
-    /* ======================================================
-       COMMON
-       ====================================================== */
-
+   //common
     private UsageCounter getUsageForActiveSubscription(Long tenantId) {
 
         Subscription subscription =
@@ -34,10 +31,7 @@ public class UsageCounterService {
                         new IllegalStateException("Usage counter not found for active subscription"));
     }
 
-    /* ======================================================
-       RESUME USAGE
-       ====================================================== */
-
+    // resume usage
     public void checkResumeLimit(Long tenantId) {
 
         UsageCounter usage = getUsageForActiveSubscription(tenantId);
@@ -54,10 +48,7 @@ public class UsageCounterService {
         usage.setResumeUsed(usage.getResumeUsed() + 1);
     }
 
-    /* ======================================================
-       JD USAGE
-       ====================================================== */
-
+   //JD usage
     public void checkJdLimit(Long tenantId) {
 
         UsageCounter usage = getUsageForActiveSubscription(tenantId);
@@ -74,10 +65,7 @@ public class UsageCounterService {
         usage.setJdUsed(usage.getJdUsed() + 1);
     }
 
-    /* ======================================================
-       MATCH USAGE
-       ====================================================== */
-
+    // match usage
     public void checkMatchLimit(Long tenantId) {
 
         UsageCounter usage = getUsageForActiveSubscription(tenantId);
