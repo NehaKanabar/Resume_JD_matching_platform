@@ -4,18 +4,19 @@ import com.resume.resumematching.context.TenantContext;
 import com.resume.resumematching.dto.payment.PaymentResponse;
 import com.resume.resumematching.entity.Invoice;
 import com.resume.resumematching.entity.Payment;
+import com.resume.resumematching.entity.Tenant;
 import com.resume.resumematching.enums.InvoiceStatus;
 import com.resume.resumematching.enums.PaymentStatus;
 import com.resume.resumematching.repository.InvoiceRepository;
 import com.resume.resumematching.repository.PaymentRepository;
+import com.resume.resumematching.repository.TenantRepository;
 import com.stripe.exception.StripeException;
+import com.stripe.model.Customer;
 import com.stripe.model.PaymentIntent;
-import com.stripe.param.PaymentIntentCreateParams;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 @Service
@@ -25,53 +26,75 @@ public class PaymentService {
 
     private final InvoiceRepository invoiceRepository;
     private final PaymentRepository paymentRepository;
+    private final TenantRepository tenantRepository;
     private final StripeService stripeService;
 
     public PaymentResponse payInvoice(Long invoiceId) throws StripeException {
 
         Long tenantId = TenantContext.getTenantId();
 
+        // Fetch invoice
         Invoice invoice = invoiceRepository.findById(invoiceId)
                 .orElseThrow(() -> new RuntimeException("Invoice not found"));
 
+        // Tenant validation
         if (!invoice.getTenantId().equals(tenantId)) {
             throw new RuntimeException("Unauthorized invoice access");
         }
 
+        // Invoice status validation
         if (invoice.getStatus() == InvoiceStatus.PAID) {
             throw new RuntimeException("Invoice already paid");
         }
 
-        //  Create Stripe PaymentIntent
-        PaymentIntent intent = PaymentIntent.create(
-                PaymentIntentCreateParams.builder()
-                        .setAmount(invoice.getAmount().multiply(BigDecimal.valueOf(100)).longValue())
-                        .setCurrency("inr")
-                        .setPaymentMethod("pm_card_visa") // TEST CARD
-                        .setConfirm(true)
-                        .build()
+        // Fetch tenant
+        Tenant tenant = tenantRepository.findById(tenantId)
+                .orElseThrow(() -> new RuntimeException("Tenant not found"));
+
+        // Create Stripe Customer if not exists
+        String stripeCustomerId = tenant.getStripeCustomerId();
+
+        if (stripeCustomerId == null) {
+            Customer customer = stripeService.createCustomer(
+                    tenant.getName()
+            );
+            stripeCustomerId = customer.getId();
+            tenant.setStripeCustomerId(stripeCustomerId);
+            tenantRepository.save(tenant);
+        }
+
+        // Create Stripe PaymentIntent
+        PaymentIntent intent = stripeService.createPaymentIntent(
+                invoice.getAmount(),
+                stripeCustomerId,
+                invoice.getId(),
+                tenantId
         );
 
-        // Save payment
+        // Save payment (PENDING initially)
         Payment payment = paymentRepository.save(
                 Payment.builder()
                         .invoice(invoice)
                         .tenantId(tenantId)
                         .amount(invoice.getAmount())
                         .stripePaymentIntentId(intent.getId())
-                        .status(PaymentStatus.SUCCESS)
+                        .status(PaymentStatus.PENDING)
                         .createdAt(LocalDateTime.now())
                         .build()
         );
 
-        //  Mark invoice PAID
+
+        payment.setStatus(PaymentStatus.SUCCESS);
         invoice.setStatus(InvoiceStatus.PAID);
+
+        paymentRepository.save(payment);
         invoiceRepository.save(invoice);
 
+        //  Return response
         return new PaymentResponse(
-                payment.getInvoice().getId(),
+                invoice.getId(),
                 payment.getStatus(),
-                payment.getStripePaymentIntentId(),
+                intent.getId(),
                 payment.getAmount()
         );
     }

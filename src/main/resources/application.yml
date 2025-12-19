@@ -41,4 +41,4 @@ security:
     expiration: 86400000 # 24 hours in ms
 
 stripe:
-  secret-key: sk_test_xxxxxxxxxxxxxxxxx
+  secret-key: sk_test_51RBBy7P6rv7tIZ0xYNyxKkpOs3qWZbpJyUPfrdrjvhMHZunRXjSi7VwPfE88eOjMXUzC5ZjAsImLbAgM2pIJcVpd00ND5J7tbR

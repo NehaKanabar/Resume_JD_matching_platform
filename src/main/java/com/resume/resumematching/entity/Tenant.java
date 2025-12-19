@@ -29,6 +29,8 @@ public class Tenant {
     @Column(name = "created_at", nullable = false, updatable = false)
     private Instant createdAt;
 
+    private String stripeCustomerId;
+
     @PrePersist
     public void onCreate() {
         this.createdAt = Instant.now();

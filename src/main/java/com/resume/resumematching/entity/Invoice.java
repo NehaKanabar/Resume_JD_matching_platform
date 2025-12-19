@@ -30,7 +30,6 @@ public class Invoice {
     private InvoiceStatus status;
 
     private LocalDate dueDate;
-    private String pdfUrl;
 
     private LocalDateTime createdAt;
 

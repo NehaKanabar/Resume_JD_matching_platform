@@ -33,6 +33,8 @@ public class UploadService {
     private final TenantRepository tenantRepository;
     private final UserRepository userRepository;
     private final UsageCounterService usageCounterService;
+    private final BillingAccessValidator billingAccessValidator;
+
 
     //   UPLOAD FILE (MULTIPART)
     public UploadResponse uploadFile(
@@ -44,6 +46,9 @@ public class UploadService {
         if (tenantId == null) {
             throw new RuntimeException("Tenant context missing");
         }
+
+        // Billing check
+        billingAccessValidator.validateUploadAccess();
 
         // PLAN LIMIT CHECK
         if (fileType == FileType.RESUME) {
