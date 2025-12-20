@@ -40,4 +40,12 @@ public class TenantController {
         tenantService.deleteTenant(id);
         return ResponseEntity.noContent().build();
     }
+
+    // SUPERUSER can view all tenants (companies)
+    @GetMapping
+    @PreAuthorize("hasRole('SUPERUSER')")
+    public ResponseEntity<?> getAllTenants() {
+        return ResponseEntity.ok(tenantService.getAllTenants());
+    }
+
 }

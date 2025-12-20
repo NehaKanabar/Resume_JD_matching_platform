@@ -2,6 +2,7 @@ package com.resume.resumematching.service;
 
 import com.resume.resumematching.context.TenantContext;
 import com.resume.resumematching.dto.tenant.CreateTenantRequest;
+import com.resume.resumematching.dto.tenant.TenantResponse;
 import com.resume.resumematching.entity.Tenant;
 import com.resume.resumematching.entity.User;
 import com.resume.resumematching.enums.Role;
@@ -89,4 +90,17 @@ public class TenantService {
         tenant.setStatus(TenantStatus.DELETED);
         tenantRepository.save(tenant);
     }
+
+    public List<TenantResponse> getAllTenants() {
+        return tenantRepository.findAll()
+                .stream()
+                .map(tenant -> new TenantResponse(
+                        tenant.getId(),
+                        tenant.getName(),
+                        tenant.getStatus().name(),
+                        tenant.getCreatedAt().toString()
+                ))
+                .toList();
+    }
+
 }
