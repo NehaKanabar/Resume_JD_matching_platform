@@ -5,6 +5,7 @@ import com.resume.resumematching.service.CustomUserDetailsService;
 import com.resume.resumematching.service.JwtService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
+import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
@@ -26,7 +27,7 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
 
     @Override
     protected boolean shouldNotFilter(HttpServletRequest request) {
-        return request.getServletPath().startsWith("/auth/");
+        return request.getServletPath().equals("/auth/login");
     }
 
     @Override
@@ -37,28 +38,23 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
     ) throws ServletException, IOException {
 
         try {
-            final String authHeader = request.getHeader("Authorization");
+            String jwt = extractJwtFromCookie(request);
 
-            // Check Authorization header
-            if (authHeader == null || !authHeader.startsWith("Bearer ")) {
+            if (jwt == null) {
                 filterChain.doFilter(request, response);
                 return;
             }
 
-            // Extract JWT
-            String jwt = authHeader.substring(7);
             String email = jwtService.extractEmail(jwt);
-
-            // Extract tenantId from JWT
             Long tenantId = jwtService.extractTenantId(jwt);
 
-            // Store tenantId in TenantContext (SUPERUSER → null)
+            // Store tenantId (SUPERUSER → null)
             if (tenantId != null) {
                 TenantContext.setTenantId(tenantId);
             }
 
-            // Authenticate user
-            if (email != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+            if (email != null &&
+                    SecurityContextHolder.getContext().getAuthentication() == null) {
 
                 UserDetails userDetails =
                         userDetailsService.loadUserByUsername(email);
@@ -83,12 +79,21 @@ public class JwtAuthenticationFilter extends OncePerRequestFilter {
                 }
             }
 
-            // Continue request
             filterChain.doFilter(request, response);
 
         } finally {
-            // clear tenant after request
             TenantContext.clear();
         }
+    }
+
+    private String extractJwtFromCookie(HttpServletRequest request) {
+        if (request.getCookies() == null) return null;
+
+        for (Cookie cookie : request.getCookies()) {
+            if ("JWT_TOKEN".equals(cookie.getName())) {
+                return cookie.getValue();
+            }
+        }
+        return null;
     }
 }

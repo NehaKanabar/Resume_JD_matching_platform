@@ -6,9 +6,8 @@ import lombok.Data;
 
 @Data
 @AllArgsConstructor
-public class LoginResponse {
+public class MeResponse {
 
-    private String message;
     private String email;
     private Role role;
     private Long tenantId;
