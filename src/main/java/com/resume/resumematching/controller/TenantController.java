@@ -33,7 +33,7 @@ public class TenantController {
         return ResponseEntity.noContent().build();
     }
 
-    // SUPERUSER can delete tenant (soft delete recommended)
+    // SUPERUSER can delete tenant (soft delete)
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('SUPERUSER')")
     public ResponseEntity<Void> deleteTenant(@PathVariable Long id) {
