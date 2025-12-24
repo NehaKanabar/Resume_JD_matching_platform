@@ -1,12 +1,10 @@
 package com.resume.resumematching.controller;
 
+import com.resume.resumematching.dto.common.ApiResponse;
 import com.resume.resumematching.service.ParsingService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/api/parse")
@@ -16,9 +14,17 @@ public class ParsingController {
     private final ParsingService parsingService;
 
     @PostMapping("/{uploadId}")
-    public ResponseEntity<String> parse(@PathVariable Long uploadId) {
+    public ResponseEntity<ApiResponse<Void>> parse(
+            @PathVariable Long uploadId
+    ) {
+
         parsingService.parseUpload(uploadId);
-        return ResponseEntity.ok("Parsing completed");
+
+        return ResponseEntity.ok(
+                ApiResponse.success(
+                        "Parsing completed successfully",
+                        null
+                )
+        );
     }
 }
-

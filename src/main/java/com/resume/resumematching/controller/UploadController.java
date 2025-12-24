@@ -1,5 +1,6 @@
 package com.resume.resumematching.controller;
 
+import com.resume.resumematching.dto.common.ApiResponse;
 import com.resume.resumematching.dto.upload.UploadResponse;
 import com.resume.resumematching.enums.FileType;
 import com.resume.resumematching.service.UploadService;
@@ -19,27 +20,40 @@ public class UploadController {
 
     private final UploadService uploadService;
 
-    //   UPLOAD RESUME / JD (MULTIPART)
-
+    // UPLOAD RESUME / JD
     @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
-    public ResponseEntity<UploadResponse> upload(
+    public ResponseEntity<ApiResponse<UploadResponse>> upload(
             @RequestParam("file") MultipartFile file,
             @RequestParam("fileType") FileType fileType,
             Authentication authentication
     ) {
-        UploadResponse response = uploadService.uploadFile(
+
+        UploadResponse uploadResponse = uploadService.uploadFile(
                 file,
                 fileType,
-                authentication.getName()   // logged-in user's email
+                authentication.getName()
         );
 
-        return ResponseEntity.ok(response);
+        return ResponseEntity.ok(
+                ApiResponse.success(
+                        "File uploaded successfully",
+                        uploadResponse
+                )
+        );
     }
 
-     //  GET ALL UPLOADS (TENANT-WISE)
-
+    // GET ALL UPLOADS (TENANT-WISE)
     @GetMapping
-    public ResponseEntity<List<UploadResponse>> getUploads() {
-        return ResponseEntity.ok(uploadService.getTenantUploads());
+    public ResponseEntity<ApiResponse<List<UploadResponse>>> getUploads() {
+
+        List<UploadResponse> uploads =
+                uploadService.getTenantUploads();
+
+        return ResponseEntity.ok(
+                ApiResponse.success(
+                        "Uploads fetched successfully",
+                        uploads
+                )
+        );
     }
 }

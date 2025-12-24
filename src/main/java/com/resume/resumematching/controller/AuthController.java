@@ -3,8 +3,9 @@ package com.resume.resumematching.controller;
 import com.resume.resumematching.dto.auth.LoginRequest;
 import com.resume.resumematching.dto.auth.LoginResponse;
 import com.resume.resumematching.dto.auth.MeResponse;
+import com.resume.resumematching.dto.common.ApiResponse;
 import com.resume.resumematching.entity.User;
-import com.resume.resumematching.enums.Role;
+import com.resume.resumematching.exception.ResourceNotFoundException;
 import com.resume.resumematching.repository.UserRepository;
 import com.resume.resumematching.service.JwtService;
 import jakarta.servlet.http.Cookie;
@@ -14,7 +15,6 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
@@ -28,8 +28,9 @@ public class AuthController {
     private final JwtService jwtService;
     private final UserRepository userRepository;
 
+
     @PostMapping("/login")
-    public ResponseEntity<LoginResponse> login(
+    public ResponseEntity<ApiResponse<LoginResponse>> login(
             @Valid @RequestBody LoginRequest request,
             HttpServletResponse response
     ) {
@@ -42,7 +43,7 @@ public class AuthController {
         );
 
         User user = userRepository.findByEmail(request.getEmail())
-                .orElseThrow(() -> new UsernameNotFoundException("User not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
         Long tenantId = user.getTenant() != null
                 ? user.getTenant().getId()
@@ -50,7 +51,7 @@ public class AuthController {
 
         String tenantName = user.getTenant() != null
                 ? user.getTenant().getName()
-                : null; // SUPERUSER
+                : null;
 
         String token = jwtService.generateToken(
                 user.getEmail(),
@@ -66,19 +67,21 @@ public class AuthController {
 
         response.addCookie(jwtCookie);
 
+        LoginResponse loginResponse = new LoginResponse(
+                "Login successful",
+                user.getEmail(),
+                user.getRole(),
+                tenantId,
+                tenantName
+        );
+
         return ResponseEntity.ok(
-                new LoginResponse(
-                        "Login successful",
-                        user.getEmail(),
-                        user.getRole(),
-                        tenantId,
-                        tenantName
-                )
+                ApiResponse.success("Login successful", loginResponse)
         );
     }
 
     @GetMapping("/me")
-    public ResponseEntity<MeResponse> me() {
+    public ResponseEntity<ApiResponse<MeResponse>> me() {
 
         String email = SecurityContextHolder
                 .getContext()
@@ -96,29 +99,31 @@ public class AuthController {
                 ? user.getTenant().getName()
                 : null;
 
+        MeResponse meResponse = new MeResponse(
+                user.getEmail(),
+                user.getRole(),
+                tenantId,
+                tenantName
+        );
+
         return ResponseEntity.ok(
-                new MeResponse(
-                        user.getEmail(),
-                        user.getRole(),
-                        tenantId,
-                        tenantName
-                )
+                ApiResponse.success("User details fetched", meResponse)
         );
     }
 
     @PostMapping("/logout")
-    public ResponseEntity<String> logout(HttpServletResponse response) {
+    public ResponseEntity<ApiResponse<Void>> logout(HttpServletResponse response) {
 
         Cookie cookie = new Cookie("JWT_TOKEN", null);
         cookie.setHttpOnly(true);
         cookie.setSecure(false); // true in prod
         cookie.setPath("/");
-        cookie.setMaxAge(0); // delete immediately
+        cookie.setMaxAge(0);
 
         response.addCookie(cookie);
 
-        return ResponseEntity.ok("Logged out successfully");
+        return ResponseEntity.ok(
+                ApiResponse.success("Logged out successfully", null)
+        );
     }
-
 }
-

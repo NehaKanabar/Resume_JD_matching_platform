@@ -1,5 +1,7 @@
 package com.resume.resumematching.controller;
 
+import com.resume.resumematching.dto.common.ApiResponse;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -7,8 +9,15 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("/health")
 public class HealthController {
+
     @GetMapping
-    public String health() {
-        return "Backend is running";
+    public ResponseEntity<ApiResponse<String>> health() {
+
+        return ResponseEntity.ok(
+                ApiResponse.success(
+                        "Health check successful",
+                        "Backend is running"
+                )
+        );
     }
 }

@@ -1,12 +1,16 @@
 package com.resume.resumematching.controller;
 
+import com.resume.resumematching.dto.common.ApiResponse;
 import com.resume.resumematching.dto.tenant.CreateTenantRequest;
+import com.resume.resumematching.dto.tenant.TenantResponse;
 import com.resume.resumematching.service.TenantService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/api/tenants")
@@ -15,37 +19,69 @@ public class TenantController {
 
     private final TenantService tenantService;
 
-    // SUPERUSER creates tenant + admin
+    // SUPERUSER → Create tenant + default admin
     @PostMapping
     @PreAuthorize("hasRole('SUPERUSER')")
-    public ResponseEntity<String> createTenant(
+    public ResponseEntity<ApiResponse<Void>> createTenant(
             @Valid @RequestBody CreateTenantRequest request
     ) {
+
         tenantService.createTenantWithAdmin(request);
-        return ResponseEntity.ok("Tenant and Admin created successfully");
+
+        return ResponseEntity.ok(
+                ApiResponse.success(
+                        "Tenant and Admin created successfully",
+                        null
+                )
+        );
     }
 
-    // SUPERUSER can suspend tenant
+    // SUPERUSER → Suspend tenant
     @PatchMapping("/{id}/suspend")
     @PreAuthorize("hasRole('SUPERUSER')")
-    public ResponseEntity<Void> suspendTenant(@PathVariable Long id) {
+    public ResponseEntity<ApiResponse<Void>> suspendTenant(
+            @PathVariable Long id
+    ) {
+
         tenantService.suspendTenant(id);
-        return ResponseEntity.noContent().build();
+
+        return ResponseEntity.ok(
+                ApiResponse.success(
+                        "Tenant suspended successfully",
+                        null
+                )
+        );
     }
 
-    // SUPERUSER can delete tenant (soft delete)
+    // SUPERUSER → Soft delete tenant
     @DeleteMapping("/{id}")
     @PreAuthorize("hasRole('SUPERUSER')")
-    public ResponseEntity<Void> deleteTenant(@PathVariable Long id) {
+    public ResponseEntity<ApiResponse<Void>> deleteTenant(
+            @PathVariable Long id
+    ) {
+
         tenantService.deleteTenant(id);
-        return ResponseEntity.noContent().build();
+
+        return ResponseEntity.ok(
+                ApiResponse.success(
+                        "Tenant deleted successfully",
+                        null
+                )
+        );
     }
 
-    // SUPERUSER can view all tenants (companies)
+    // SUPERUSER → View all tenants
     @GetMapping
     @PreAuthorize("hasRole('SUPERUSER')")
-    public ResponseEntity<?> getAllTenants() {
-        return ResponseEntity.ok(tenantService.getAllTenants());
-    }
+    public ResponseEntity<ApiResponse<List<TenantResponse>>> getAllTenants() {
 
+        List<TenantResponse> tenants = tenantService.getAllTenants();
+
+        return ResponseEntity.ok(
+                ApiResponse.success(
+                        "Tenants fetched successfully",
+                        tenants
+                )
+        );
+    }
 }

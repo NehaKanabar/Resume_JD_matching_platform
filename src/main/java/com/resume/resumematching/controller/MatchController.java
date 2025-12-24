@@ -1,5 +1,6 @@
 package com.resume.resumematching.controller;
 
+import com.resume.resumematching.dto.common.ApiResponse;
 import com.resume.resumematching.entity.MatchJob;
 import com.resume.resumematching.service.MatchService;
 import lombok.RequiredArgsConstructor;
@@ -16,8 +17,17 @@ public class MatchController {
 
     @PostMapping("/{jdUploadId}")
     @PreAuthorize("hasRole('HR')")
-    public ResponseEntity<MatchJob> runMatch(@PathVariable Long jdUploadId) {
-        return ResponseEntity.ok(matchService.runMatch(jdUploadId));
+    public ResponseEntity<ApiResponse<MatchJob>> runMatch(
+            @PathVariable Long jdUploadId
+    ) {
+
+        MatchJob matchJob = matchService.runMatch(jdUploadId);
+
+        return ResponseEntity.ok(
+                ApiResponse.success(
+                        "Resume matching completed",
+                        matchJob
+                )
+        );
     }
 }
-
