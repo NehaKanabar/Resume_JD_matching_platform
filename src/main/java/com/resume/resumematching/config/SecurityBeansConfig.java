@@ -1,7 +1,6 @@
 package com.resume.resumematching.config;
 
 import com.resume.resumematching.security.JwtAuthenticationFilter;
-import com.resume.resumematching.service.CustomUserDetailsService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

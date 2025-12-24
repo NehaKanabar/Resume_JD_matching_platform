@@ -1,6 +1,6 @@
 package com.resume.resumematching.exception;
 
-import com.resume.resumematching.dto.common.ApiResponse;
+import com.resume.resumematching.common.ApiResponse;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.access.AccessDeniedException;

@@ -1,7 +1,7 @@
 package com.resume.resumematching.service;
 
 import com.resume.resumematching.context.TenantContext;
-import com.resume.resumematching.entity.Invoice;
+import com.resume.resumematching.payment.entity.Invoice;
 import com.resume.resumematching.enums.InvoiceStatus;
 import com.resume.resumematching.repository.InvoiceRepository;
 import lombok.RequiredArgsConstructor;

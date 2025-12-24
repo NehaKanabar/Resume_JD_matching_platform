@@ -1,7 +1,7 @@
 package com.resume.resumematching.repository;
 
 
-import com.resume.resumematching.entity.Invoice;
+import com.resume.resumematching.payment.entity.Invoice;
 import com.resume.resumematching.enums.InvoiceStatus;
 import org.springframework.data.jpa.repository.JpaRepository;
 

@@ -1,6 +1,6 @@
 package com.resume.resumematching.repository;
 
-import com.resume.resumematching.entity.Payment;
+import com.resume.resumematching.payment.entity.Payment;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;

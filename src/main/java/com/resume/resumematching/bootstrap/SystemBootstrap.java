@@ -1,6 +1,6 @@
 package com.resume.resumematching.bootstrap;
 
-import com.resume.resumematching.entity.User;
+import com.resume.resumematching.user.entity.User;
 import com.resume.resumematching.enums.Role;
 import com.resume.resumematching.repository.UserRepository;
 import lombok.RequiredArgsConstructor;

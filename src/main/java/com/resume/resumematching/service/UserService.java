@@ -1,12 +1,12 @@
 package com.resume.resumematching.service;
 
 import com.resume.resumematching.context.TenantContext;
-import com.resume.resumematching.dto.user.CreateHrUserRequest;
-import com.resume.resumematching.dto.user.UserResponse;
-import com.resume.resumematching.entity.Tenant;
-import com.resume.resumematching.entity.User;
+import com.resume.resumematching.user.dto.CreateHrUserRequest;
+import com.resume.resumematching.user.dto.UserResponse;
+import com.resume.resumematching.tenant.entity.Tenant;
+import com.resume.resumematching.user.entity.User;
 import com.resume.resumematching.enums.Role;
-import com.resume.resumematching.repository.TenantRepository;
+import com.resume.resumematching.tenant.TenantRepository;
 import com.resume.resumematching.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;

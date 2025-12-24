@@ -1,6 +1,6 @@
 package com.resume.resumematching.repository;
 
-import com.resume.resumematching.entity.ParsedDocument;
+import com.resume.resumematching.upload.entity.ParsedDocument;
 import com.resume.resumematching.enums.FileType;
 import com.resume.resumematching.enums.UploadStatus;
 import org.springframework.data.jpa.repository.JpaRepository;

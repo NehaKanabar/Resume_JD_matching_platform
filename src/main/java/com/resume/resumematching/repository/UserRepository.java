@@ -1,6 +1,6 @@
 package com.resume.resumematching.repository;
 
-import com.resume.resumematching.entity.User;
+import com.resume.resumematching.user.entity.User;
 import com.resume.resumematching.enums.Role;
 import org.springframework.data.jpa.repository.JpaRepository;
 

@@ -1,9 +1,9 @@
 package com.resume.resumematching.service;
 
-import com.resume.resumematching.dto.plan.CreatePlanRequest;
-import com.resume.resumematching.dto.plan.PlanResponse;
-import com.resume.resumematching.dto.plan.UpdatePlanRequest;
-import com.resume.resumematching.entity.Plan;
+import com.resume.resumematching.plan.dto.CreatePlanRequest;
+import com.resume.resumematching.plan.dto.PlanResponse;
+import com.resume.resumematching.plan.dto.UpdatePlanRequest;
+import com.resume.resumematching.plan.entity.Plan;
 import com.resume.resumematching.repository.PlanRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

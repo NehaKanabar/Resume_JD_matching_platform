@@ -1,0 +1,16 @@
+package com.resume.resumematching.auth.dto;
+
+import com.resume.resumematching.enums.Role;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+
+@Data
+@AllArgsConstructor
+public class LoginResponse {
+
+    private String message;
+    private String email;
+    private Role role;
+    private Long tenantId;
+    private String tenantName;
+}

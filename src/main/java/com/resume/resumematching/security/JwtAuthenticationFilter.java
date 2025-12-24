@@ -1,8 +1,8 @@
 package com.resume.resumematching.security;
 
 import com.resume.resumematching.context.TenantContext;
-import com.resume.resumematching.service.CustomUserDetailsService;
-import com.resume.resumematching.service.JwtService;
+import com.resume.resumematching.auth.CustomUserDetailsService;
+import com.resume.resumematching.auth.JwtService;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.Cookie;

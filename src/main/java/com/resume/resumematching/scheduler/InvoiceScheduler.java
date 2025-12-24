@@ -1,11 +1,11 @@
 package com.resume.resumematching.scheduler;
 
-import com.resume.resumematching.entity.Invoice;
-import com.resume.resumematching.entity.Subscription;
+import com.resume.resumematching.payment.entity.Invoice;
+import com.resume.resumematching.subscription.entity.Subscription;
 import com.resume.resumematching.enums.InvoiceStatus;
 import com.resume.resumematching.enums.SubscriptionStatus;
 import com.resume.resumematching.repository.InvoiceRepository;
-import com.resume.resumematching.repository.SubscriptionRepository;
+import com.resume.resumematching.subscription.SubscriptionRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.scheduling.annotation.Scheduled;
