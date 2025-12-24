@@ -40,5 +40,10 @@ security:
     secret: "THIS_IS_A_VERY_SECURE_SECRET_KEY_1234567890"
     expiration: 86400000 # 24 hours in ms
 
+bootstrap:
+  superuser:
+    email: superadmin@resumematch.com
+    password: SuperAdmin@123
+
 stripe:
   secret-key: sk_test_51RBBy7P6rv7tIZ0xYNyxKkpOs3qWZbpJyUPfrdrjvhMHZunRXjSi7VwPfE88eOjMXUzC5ZjAsImLbAgM2pIJcVpd00ND5J7tbR
