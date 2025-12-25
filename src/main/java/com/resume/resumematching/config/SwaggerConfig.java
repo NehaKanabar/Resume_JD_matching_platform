@@ -15,16 +15,11 @@ public class SwaggerConfig {
         return new OpenAPI()
                 .info(new Info()
                         .title("Resume Matching API")
-                        .version("1.0"))
-                .addSecurityItem(new SecurityRequirement().addList("bearerAuth"))
-                .components(new io.swagger.v3.oas.models.Components()
-                        .addSecuritySchemes("bearerAuth",
-                                new SecurityScheme()
-                                        .type(SecurityScheme.Type.HTTP)
-                                        .scheme("bearer")
-                                        .bearerFormat("JWT")));
+                        .version("1.0")
+                        .description("JWT is stored in HttpOnly cookies. Login once to access secured APIs."));
     }
 }
+
 
 
 
