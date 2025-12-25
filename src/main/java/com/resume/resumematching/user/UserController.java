@@ -3,7 +3,6 @@ package com.resume.resumematching.user;
 import com.resume.resumematching.common.ApiResponse;
 import com.resume.resumematching.user.dto.CreateHrUserRequest;
 import com.resume.resumematching.user.dto.UserResponse;
-import com.resume.resumematching.service.UserService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;

@@ -36,13 +36,13 @@ public class TenantController {
     }
 
     // SUPERUSER → Suspend tenant
-    @PatchMapping("/{id}/suspend")
+    @PatchMapping("/{tenantId}/suspend")
     @PreAuthorize("hasRole('SUPERUSER')")
     public ResponseEntity<ApiResponse<Void>> suspendTenant(
-            @PathVariable Long id
+            @PathVariable("tenantId") Long tenantId
     ) {
 
-        tenantService.suspendTenant(id);
+        tenantService.suspendTenant(tenantId);
 
         return ResponseEntity.ok(
                 ApiResponse.success(
@@ -53,13 +53,13 @@ public class TenantController {
     }
 
     // SUPERUSER → Soft delete tenant
-    @DeleteMapping("/{id}")
+    @DeleteMapping("/{tenantId}")
     @PreAuthorize("hasRole('SUPERUSER')")
     public ResponseEntity<ApiResponse<Void>> deleteTenant(
-            @PathVariable Long id
+            @PathVariable("tenantId") Long tenantId
     ) {
 
-        tenantService.deleteTenant(id);
+        tenantService.deleteTenant(tenantId);
 
         return ResponseEntity.ok(
                 ApiResponse.success(

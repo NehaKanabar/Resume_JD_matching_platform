@@ -7,7 +7,7 @@ import com.resume.resumematching.tenant.entity.Tenant;
 import com.resume.resumematching.user.entity.User;
 import com.resume.resumematching.enums.Role;
 import com.resume.resumematching.enums.TenantStatus;
-import com.resume.resumematching.repository.UserRepository;
+import com.resume.resumematching.user.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;

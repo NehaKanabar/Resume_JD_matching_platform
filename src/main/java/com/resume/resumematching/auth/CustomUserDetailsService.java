@@ -1,7 +1,7 @@
 package com.resume.resumematching.auth;
 
 import com.resume.resumematching.user.entity.User;
-import com.resume.resumematching.repository.UserRepository;
+import com.resume.resumematching.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;

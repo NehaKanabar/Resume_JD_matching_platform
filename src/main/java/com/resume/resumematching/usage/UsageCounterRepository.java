@@ -1,4 +1,4 @@
-package com.resume.resumematching.repository;
+package com.resume.resumematching.usage;
 
 import com.resume.resumematching.subscription.entity.Subscription;
 import com.resume.resumematching.tenant.entity.Tenant;

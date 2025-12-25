@@ -46,7 +46,8 @@ public class SecurityBeansConfig {
                         session.sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
                 .authorizeHttpRequests(auth -> auth
-                        .requestMatchers("/auth/**", "/health", "/error").permitAll()
+                        .requestMatchers("/auth/**", "/health", "/error", "/swagger-ui/**",
+                                "/v3/api-docs/**","/swagger-ui.html").permitAll()
                         .anyRequest().authenticated()
                 )
                 .addFilterBefore(

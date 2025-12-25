@@ -1,4 +1,4 @@
-package com.resume.resumematching.service;
+package com.resume.resumematching.upload;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -7,8 +7,6 @@ import com.resume.resumematching.upload.entity.ParsedDocument;
 import com.resume.resumematching.upload.entity.Upload;
 import com.resume.resumematching.enums.FileType;
 import com.resume.resumematching.enums.UploadStatus;
-import com.resume.resumematching.repository.ParsedDocumentRepository;
-import com.resume.resumematching.upload.UploadRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

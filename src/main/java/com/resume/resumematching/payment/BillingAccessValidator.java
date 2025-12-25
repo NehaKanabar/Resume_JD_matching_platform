@@ -1,9 +1,8 @@
-package com.resume.resumematching.service;
+package com.resume.resumematching.payment;
 
 import com.resume.resumematching.context.TenantContext;
 import com.resume.resumematching.payment.entity.Invoice;
 import com.resume.resumematching.enums.InvoiceStatus;
-import com.resume.resumematching.repository.InvoiceRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

@@ -1,7 +1,6 @@
 package com.resume.resumematching.upload;
 
 import com.resume.resumematching.common.ApiResponse;
-import com.resume.resumematching.service.ParsingService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

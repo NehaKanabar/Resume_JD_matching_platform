@@ -1,4 +1,4 @@
-package com.resume.resumematching.repository;
+package com.resume.resumematching.matchJob;
 
 import com.resume.resumematching.matchJob.entity.MatchResult;
 import org.springframework.data.jpa.repository.JpaRepository;

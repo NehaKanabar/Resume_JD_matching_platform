@@ -1,17 +1,19 @@
 package com.resume.resumematching.subscription;
 
 import com.resume.resumematching.context.TenantContext;
+import com.resume.resumematching.payment.InvoiceRepository;
 import com.resume.resumematching.payment.entity.Invoice;
+import com.resume.resumematching.plan.PlanRepository;
 import com.resume.resumematching.plan.entity.Plan;
 import com.resume.resumematching.subscription.dto.CreateSubscriptionRequest;
 import com.resume.resumematching.subscription.dto.SubscriptionResponse;
 import com.resume.resumematching.enums.BillingCycle;
 import com.resume.resumematching.enums.InvoiceStatus;
 import com.resume.resumematching.enums.SubscriptionStatus;
-import com.resume.resumematching.repository.*;
 import com.resume.resumematching.subscription.entity.Subscription;
 import com.resume.resumematching.tenant.TenantRepository;
 import com.resume.resumematching.tenant.entity.Tenant;
+import com.resume.resumematching.usage.UsageCounterRepository;
 import com.resume.resumematching.usage.entity.UsageCounter;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;

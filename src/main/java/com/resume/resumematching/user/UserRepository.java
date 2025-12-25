@@ -1,4 +1,4 @@
-package com.resume.resumematching.repository;
+package com.resume.resumematching.user;
 
 import com.resume.resumematching.user.entity.User;
 import com.resume.resumematching.enums.Role;

@@ -6,7 +6,7 @@ import com.resume.resumematching.auth.dto.MeResponse;
 import com.resume.resumematching.common.ApiResponse;
 import com.resume.resumematching.user.entity.User;
 import com.resume.resumematching.exception.ResourceNotFoundException;
-import com.resume.resumematching.repository.UserRepository;
+import com.resume.resumematching.user.UserRepository;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.validation.Valid;

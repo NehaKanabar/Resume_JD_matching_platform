@@ -3,7 +3,6 @@ package com.resume.resumematching.usage;
 import com.resume.resumematching.subscription.entity.Subscription;
 import com.resume.resumematching.usage.entity.UsageCounter;
 import com.resume.resumematching.enums.SubscriptionStatus;
-import com.resume.resumematching.repository.UsageCounterRepository;
 import com.resume.resumematching.subscription.SubscriptionService;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;

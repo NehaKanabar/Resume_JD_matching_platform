@@ -1,4 +1,4 @@
-package com.resume.resumematching.repository;
+package com.resume.resumematching.upload;
 
 import com.resume.resumematching.upload.entity.ParsedDocument;
 import com.resume.resumematching.enums.FileType;

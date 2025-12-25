@@ -5,7 +5,6 @@ import com.resume.resumematching.usage.dto.UsageResponse;
 import com.resume.resumematching.subscription.entity.Subscription;
 import com.resume.resumematching.usage.entity.UsageCounter;
 import com.resume.resumematching.enums.SubscriptionStatus;
-import com.resume.resumematching.repository.UsageCounterRepository;
 import com.resume.resumematching.subscription.SubscriptionService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

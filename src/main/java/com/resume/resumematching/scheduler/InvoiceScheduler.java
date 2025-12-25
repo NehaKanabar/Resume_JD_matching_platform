@@ -4,7 +4,7 @@ import com.resume.resumematching.payment.entity.Invoice;
 import com.resume.resumematching.subscription.entity.Subscription;
 import com.resume.resumematching.enums.InvoiceStatus;
 import com.resume.resumematching.enums.SubscriptionStatus;
-import com.resume.resumematching.repository.InvoiceRepository;
+import com.resume.resumematching.payment.InvoiceRepository;
 import com.resume.resumematching.subscription.SubscriptionRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;

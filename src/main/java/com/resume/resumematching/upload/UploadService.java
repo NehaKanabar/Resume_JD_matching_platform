@@ -1,7 +1,7 @@
 package com.resume.resumematching.upload;
 
 import com.resume.resumematching.context.TenantContext;
-import com.resume.resumematching.service.BillingAccessValidator;
+import com.resume.resumematching.payment.BillingAccessValidator;
 import com.resume.resumematching.usage.UsageCounterService;
 import com.resume.resumematching.upload.dto.UploadResponse;
 import com.resume.resumematching.tenant.entity.Tenant;
@@ -10,7 +10,7 @@ import com.resume.resumematching.user.entity.User;
 import com.resume.resumematching.enums.FileType;
 import com.resume.resumematching.enums.UploadStatus;
 import com.resume.resumematching.tenant.TenantRepository;
-import com.resume.resumematching.repository.UserRepository;
+import com.resume.resumematching.user.UserRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;

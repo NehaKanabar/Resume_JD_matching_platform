@@ -7,8 +7,6 @@ import com.resume.resumematching.payment.entity.Payment;
 import com.resume.resumematching.tenant.entity.Tenant;
 import com.resume.resumematching.enums.InvoiceStatus;
 import com.resume.resumematching.enums.PaymentStatus;
-import com.resume.resumematching.repository.InvoiceRepository;
-import com.resume.resumematching.repository.PaymentRepository;
 import com.resume.resumematching.tenant.TenantRepository;
 import com.stripe.exception.StripeException;
 import com.stripe.model.Customer;

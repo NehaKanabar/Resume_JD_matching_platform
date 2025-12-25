@@ -1,4 +1,4 @@
-package com.resume.resumematching.service;
+package com.resume.resumematching.user;
 
 import com.resume.resumematching.context.TenantContext;
 import com.resume.resumematching.user.dto.CreateHrUserRequest;
@@ -7,7 +7,6 @@ import com.resume.resumematching.tenant.entity.Tenant;
 import com.resume.resumematching.user.entity.User;
 import com.resume.resumematching.enums.Role;
 import com.resume.resumematching.tenant.TenantRepository;
-import com.resume.resumematching.repository.UserRepository;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;

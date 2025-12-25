@@ -4,7 +4,6 @@ import com.resume.resumematching.common.ApiResponse;
 import com.resume.resumematching.plan.dto.CreatePlanRequest;
 import com.resume.resumematching.plan.dto.PlanResponse;
 import com.resume.resumematching.plan.dto.UpdatePlanRequest;
-import com.resume.resumematching.service.PlanService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -54,13 +53,13 @@ public class PlanController {
 
     // SUPERUSER → Update plan
     @PreAuthorize("hasRole('SUPERUSER')")
-    @PutMapping("/{id}")
+    @PutMapping("/{planId}")
     public ResponseEntity<ApiResponse<PlanResponse>> updatePlan(
-            @PathVariable Long id,
+            @PathVariable("planId") Long planId,
             @Valid @RequestBody UpdatePlanRequest request
     ) {
 
-        PlanResponse plan = planService.updatePlan(id, request);
+        PlanResponse plan = planService.updatePlan(planId, request);
 
         return ResponseEntity.ok(
                 ApiResponse.success(

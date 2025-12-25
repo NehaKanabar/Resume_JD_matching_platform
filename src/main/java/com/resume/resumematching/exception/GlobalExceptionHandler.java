@@ -1,6 +1,7 @@
 package com.resume.resumematching.exception;
 
 import com.resume.resumematching.common.ApiResponse;
+import jakarta.servlet.http.HttpServletRequest;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.access.AccessDeniedException;
@@ -89,4 +90,5 @@ public class GlobalExceptionHandler {
                 ApiResponse.failure("Internal server error", null)
         );
     }
+
 }
