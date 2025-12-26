@@ -1,9 +1,10 @@
-package com.resume.resumematching.upload.entity;
+package com.resume.resumematching.parse.entity;
 
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.resume.resumematching.enums.FileType;
 import com.resume.resumematching.enums.UploadStatus;
+import com.resume.resumematching.upload.entity.Upload;
 import jakarta.persistence.*;
 import lombok.*;
 import org.hibernate.annotations.JdbcTypeCode;

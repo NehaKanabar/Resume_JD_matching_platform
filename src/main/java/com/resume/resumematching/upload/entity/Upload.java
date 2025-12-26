@@ -1,5 +1,6 @@
 package com.resume.resumematching.upload.entity;
 
+import com.resume.resumematching.parse.entity.ParsedDocument;
 import com.resume.resumematching.user.entity.User;
 import com.resume.resumematching.enums.FileType;
 import com.resume.resumematching.enums.UploadStatus;

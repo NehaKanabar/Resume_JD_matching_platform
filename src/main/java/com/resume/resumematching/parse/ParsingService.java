@@ -1,9 +1,10 @@
-package com.resume.resumematching.upload;
+package com.resume.resumematching.parse;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.resume.resumematching.upload.entity.ParsedDocument;
+import com.resume.resumematching.upload.UploadRepository;
+import com.resume.resumematching.parse.entity.ParsedDocument;
 import com.resume.resumematching.upload.entity.Upload;
 import com.resume.resumematching.enums.FileType;
 import com.resume.resumematching.enums.UploadStatus;

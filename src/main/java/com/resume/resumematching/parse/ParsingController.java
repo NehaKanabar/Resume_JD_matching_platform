@@ -1,4 +1,4 @@
-package com.resume.resumematching.upload;
+package com.resume.resumematching.parse;
 
 import com.resume.resumematching.common.ApiResponse;
 import lombok.RequiredArgsConstructor;

@@ -66,7 +66,6 @@ public class AuthController {
         response.addCookie(jwtCookie);
 
         LoginResponse loginResponse = new LoginResponse(
-                "Login successful",
                 user.getEmail(),
                 user.getRole(),
                 tenantId,
