@@ -1,5 +1,6 @@
 package com.resume.resumematching.plan.entity;
 
+import com.resume.resumematching.common.audit.Auditable;
 import jakarta.persistence.*;
 import lombok.*;
 
@@ -12,7 +13,7 @@ import java.math.BigDecimal;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Plan {
+public class Plan extends Auditable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

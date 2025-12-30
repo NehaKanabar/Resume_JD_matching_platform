@@ -6,9 +6,8 @@ import com.resume.resumematching.enums.FileType;
 import com.resume.resumematching.enums.UploadStatus;
 import com.resume.resumematching.tenant.entity.Tenant;
 import jakarta.persistence.*;
+import com.resume.resumematching.common.audit.Auditable;
 import lombok.*;
-
-import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "upload")
@@ -17,17 +16,17 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Upload {
+public class Upload extends Auditable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "tenant_id", nullable = false)
     private Tenant tenant;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "user_id", nullable = false)
     private User user;
 
@@ -47,12 +46,4 @@ public class Upload {
 
     @OneToOne(mappedBy = "upload", cascade = CascadeType.ALL)
     private ParsedDocument parsedDocument;
-
-    @Column(nullable = false, updatable = false)
-    private LocalDateTime createdAt;
-
-    @PrePersist
-    protected void onCreate() {
-        this.createdAt = LocalDateTime.now();
-    }
 }

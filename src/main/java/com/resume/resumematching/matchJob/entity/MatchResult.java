@@ -7,7 +7,7 @@ import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
 import java.math.BigDecimal;
-import java.time.LocalDateTime;
+import com.resume.resumematching.common.audit.Auditable;
 
 @Entity
 @Table(name = "match_result")
@@ -16,7 +16,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class MatchResult {
+public class MatchResult extends Auditable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -37,8 +37,4 @@ public class MatchResult {
     @Column(name = "breakdown_json", columnDefinition = "jsonb")
     @JdbcTypeCode(SqlTypes.JSON)
     private JsonNode breakdown;
-
-    @Column(name = "created_at")
-    private LocalDateTime createdAt;
 }
-

@@ -1,11 +1,10 @@
 package com.resume.resumematching.user.entity;
 
 import com.resume.resumematching.enums.Role;
+import com.resume.resumematching.common.audit.Auditable;
 import com.resume.resumematching.tenant.entity.Tenant;
 import jakarta.persistence.*;
 import lombok.*;
-
-import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "users")
@@ -14,7 +13,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class User {
+public class User extends Auditable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,7 +21,7 @@ public class User {
 
     // Nullable ONLY for SUPERUSER
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "tenant_id", nullable = true)
+    @JoinColumn(name = "tenant_id")
     private Tenant tenant;
 
     @Column(nullable = false, unique = true)
@@ -37,12 +36,4 @@ public class User {
 
     @Column(nullable = false)
     private boolean disabled = false;
-
-    @Column(name = "created_at", nullable = false, updatable = false)
-    private LocalDateTime createdAt;
-
-    @PrePersist
-    protected void onCreate() {
-        this.createdAt = LocalDateTime.now();
-    }
 }

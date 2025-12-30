@@ -41,7 +41,6 @@ public class SystemBootstrap implements CommandLineRunner {
                 .role(Role.SUPERUSER)
                 .disabled(false)
                 .tenant(null)
-                .createdAt(LocalDateTime.now())
                 .build();
 
         userRepository.save(superUser);

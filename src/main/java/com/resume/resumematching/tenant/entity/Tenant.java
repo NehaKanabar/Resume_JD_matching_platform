@@ -1,10 +1,9 @@
 package com.resume.resumematching.tenant.entity;
 
+import com.resume.resumematching.common.audit.Auditable;
 import com.resume.resumematching.enums.TenantStatus;
 import jakarta.persistence.*;
 import lombok.*;
-
-import java.time.Instant;
 
 @Entity
 @Table(name = "tenant")
@@ -13,7 +12,7 @@ import java.time.Instant;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Tenant {
+public class Tenant extends Auditable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,14 +25,10 @@ public class Tenant {
     @Column(nullable = false)
     private TenantStatus status;
 
-    @Column(name = "created_at", nullable = false, updatable = false)
-    private Instant createdAt;
-
     private String stripeCustomerId;
 
     @PrePersist
     public void onCreate() {
-        this.createdAt = Instant.now();
         if (this.status == null) {
             this.status = TenantStatus.ACTIVE;
         }

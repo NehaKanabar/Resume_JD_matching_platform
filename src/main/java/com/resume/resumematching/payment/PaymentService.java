@@ -1,8 +1,9 @@
 package com.resume.resumematching.payment;
 
 import com.resume.resumematching.context.TenantContext;
+import com.resume.resumematching.invoice.InvoiceRepository;
 import com.resume.resumematching.payment.dto.PaymentResponse;
-import com.resume.resumematching.payment.entity.Invoice;
+import com.resume.resumematching.invoice.entity.Invoice;
 import com.resume.resumematching.payment.entity.Payment;
 import com.resume.resumematching.tenant.entity.Tenant;
 import com.resume.resumematching.enums.InvoiceStatus;
@@ -77,7 +78,6 @@ public class PaymentService {
                         .amount(invoice.getAmount())
                         .stripePaymentIntentId(intent.getId())
                         .status(PaymentStatus.PENDING)
-                        .createdAt(LocalDateTime.now())
                         .build()
         );
 

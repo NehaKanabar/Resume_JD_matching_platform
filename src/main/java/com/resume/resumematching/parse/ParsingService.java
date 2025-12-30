@@ -58,7 +58,6 @@ public class ParsingService {
                     .fileType(upload.getFileType())
                     .parsedData(parsedJsonNode)
                     .status(UploadStatus.PARSED)
-                    .createdAt(LocalDateTime.now())
                     .build();
 
             parsedDocumentRepository.save(parsedDocument);

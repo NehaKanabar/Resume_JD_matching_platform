@@ -1,8 +1,8 @@
 package com.resume.resumematching.subscription;
 
 import com.resume.resumematching.context.TenantContext;
-import com.resume.resumematching.payment.InvoiceRepository;
-import com.resume.resumematching.payment.entity.Invoice;
+import com.resume.resumematching.invoice.InvoiceRepository;
+import com.resume.resumematching.invoice.entity.Invoice;
 import com.resume.resumematching.plan.PlanRepository;
 import com.resume.resumematching.plan.entity.Plan;
 import com.resume.resumematching.subscription.dto.CreateSubscriptionRequest;
@@ -17,8 +17,6 @@ import com.resume.resumematching.usage.UsageCounterRepository;
 import com.resume.resumematching.usage.entity.UsageCounter;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
@@ -42,14 +40,14 @@ public class SubscriptionService {
             throw new RuntimeException("Superuser cannot subscribe to plans");
         }
 
-        // ROLE CHECK — ADMIN ONLY
-        if (!SecurityContextHolder.getContext()
-                .getAuthentication()
-                .getAuthorities()
-                .contains(new SimpleGrantedAuthority("ROLE_ADMIN"))) {
-
-            throw new RuntimeException("Only ADMIN can subscribe to a plan");
-        }
+//        // ROLE CHECK — ADMIN ONLY
+//        if (!SecurityContextHolder.getContext()
+//                .getAuthentication()
+//                .getAuthorities()
+//                .contains(new SimpleGrantedAuthority("ROLE_ADMIN"))) {
+//
+//            throw new RuntimeException("Only ADMIN can subscribe to a plan");
+//        }
 
         Tenant tenant = tenantRepository.findById(tenantId)
                 .orElseThrow(() -> new RuntimeException("Tenant not found"));

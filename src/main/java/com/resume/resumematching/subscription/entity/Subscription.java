@@ -1,6 +1,7 @@
 package com.resume.resumematching.subscription.entity;
 
 import com.resume.resumematching.plan.entity.Plan;
+import com.resume.resumematching.common.audit.Auditable;
 import com.resume.resumematching.enums.SubscriptionStatus;
 import com.resume.resumematching.tenant.entity.Tenant;
 import jakarta.persistence.*;
@@ -15,7 +16,7 @@ import java.time.LocalDate;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Subscription {
+public class Subscription extends Auditable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)

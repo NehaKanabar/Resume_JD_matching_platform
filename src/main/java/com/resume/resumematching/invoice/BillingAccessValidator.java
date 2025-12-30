@@ -1,7 +1,7 @@
-package com.resume.resumematching.payment;
+package com.resume.resumematching.invoice;
 
 import com.resume.resumematching.context.TenantContext;
-import com.resume.resumematching.payment.entity.Invoice;
+import com.resume.resumematching.invoice.entity.Invoice;
 import com.resume.resumematching.enums.InvoiceStatus;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

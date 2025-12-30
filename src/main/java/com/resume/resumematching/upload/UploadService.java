@@ -1,7 +1,7 @@
 package com.resume.resumematching.upload;
 
 import com.resume.resumematching.context.TenantContext;
-import com.resume.resumematching.payment.BillingAccessValidator;
+import com.resume.resumematching.invoice.BillingAccessValidator;
 import com.resume.resumematching.usage.UsageCounterService;
 import com.resume.resumematching.upload.dto.UploadResponse;
 import com.resume.resumematching.tenant.entity.Tenant;

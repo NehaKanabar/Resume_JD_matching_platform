@@ -1,10 +1,10 @@
 package com.resume.resumematching.scheduler;
 
-import com.resume.resumematching.payment.entity.Invoice;
+import com.resume.resumematching.invoice.entity.Invoice;
 import com.resume.resumematching.subscription.entity.Subscription;
 import com.resume.resumematching.enums.InvoiceStatus;
 import com.resume.resumematching.enums.SubscriptionStatus;
-import com.resume.resumematching.payment.InvoiceRepository;
+import com.resume.resumematching.invoice.InvoiceRepository;
 import com.resume.resumematching.subscription.SubscriptionRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -48,7 +48,6 @@ public class InvoiceScheduler {
                     .amount(sub.getPlan().getPriceMonthly())
                     .status(InvoiceStatus.PENDING)
                     .dueDate(LocalDate.now().plusDays(10))
-                    .createdAt(LocalDateTime.now())
                     .build();
 
             invoiceRepository.save(invoice);

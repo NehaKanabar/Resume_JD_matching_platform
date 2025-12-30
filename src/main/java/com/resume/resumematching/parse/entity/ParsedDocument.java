@@ -1,7 +1,7 @@
 package com.resume.resumematching.parse.entity;
 
-
 import com.fasterxml.jackson.databind.JsonNode;
+import com.resume.resumematching.common.audit.Auditable;
 import com.resume.resumematching.enums.FileType;
 import com.resume.resumematching.enums.UploadStatus;
 import com.resume.resumematching.upload.entity.Upload;
@@ -10,8 +10,6 @@ import lombok.*;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
-import java.time.LocalDateTime;
-
 @Entity
 @Table(name = "parsed_document")
 @Getter
@@ -19,7 +17,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class ParsedDocument {
+public class ParsedDocument extends Auditable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -42,7 +40,5 @@ public class ParsedDocument {
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false, length = 20)
-    private UploadStatus status; // PARSED
-
-    private LocalDateTime createdAt;
+    private UploadStatus status;
 }

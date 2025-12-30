@@ -80,7 +80,6 @@ public class MatchService {
                     .resumeUploadId(resume.getUpload().getId())
                     .overallScore(BigDecimal.valueOf(50 + random.nextInt(50)))
                     .breakdown(breakdownJson)   // JSONB SAFE
-                    .createdAt(LocalDateTime.now())
                     .build();
 
             matchResultRepository.save(result);
