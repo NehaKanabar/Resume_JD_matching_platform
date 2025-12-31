@@ -4,6 +4,7 @@ import com.resume.resumematching.plan.dto.CreatePlanRequest;
 import com.resume.resumematching.plan.dto.PlanResponse;
 import com.resume.resumematching.plan.dto.UpdatePlanRequest;
 import com.resume.resumematching.plan.entity.Plan;
+import com.resume.resumematching.plan.mapper.PlanMapper;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -14,6 +15,7 @@ import java.util.List;
 public class PlanService {
 
     private final PlanRepository planRepository;
+    private final PlanMapper planMapper;
 
     // SUPERUSER only
     public PlanResponse createPlan(CreatePlanRequest request) {
@@ -33,14 +35,12 @@ public class PlanService {
 
         Plan saved = planRepository.save(plan);
 
-        return mapToResponse(saved);
+        // ✅ MapStruct here
+        return planMapper.toResponse(saved);
     }
 
     public List<PlanResponse> getAllPlans() {
-        return planRepository.findAll()
-                .stream()
-                .map(this::mapToResponse)
-                .toList();
+        return planMapper.toResponseList(planRepository.findAll());
     }
 
     // SUPERUSER only
@@ -57,18 +57,7 @@ public class PlanService {
 
         Plan updated = planRepository.save(plan);
 
-        return mapToResponse(updated);
-    }
-
-    private PlanResponse mapToResponse(Plan plan) {
-        return new PlanResponse(
-                plan.getId(),
-                plan.getName(),
-                plan.getResumeLimit(),
-                plan.getJdLimit(),
-                plan.getMatchLimit(),
-                plan.getPriceMonthly(),
-                plan.getPriceYearly()
-        );
+        // ✅ MapStruct here
+        return planMapper.toResponse(updated);
     }
 }

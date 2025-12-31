@@ -7,6 +7,7 @@ import com.resume.resumematching.tenant.entity.Tenant;
 import com.resume.resumematching.user.entity.User;
 import com.resume.resumematching.enums.Role;
 import com.resume.resumematching.tenant.TenantRepository;
+import com.resume.resumematching.user.mapper.UserMapper;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -21,19 +22,7 @@ public class UserService {
     private final UserRepository userRepository;
     private final TenantRepository tenantRepository;
     private final PasswordEncoder passwordEncoder;
-
-//    public List<User> getUsers() {
-//
-//        Long tenantId = TenantContext.getTenantId();
-//
-//        // SUPERUSER → all users
-//        if (tenantId == null) {
-//            return userRepository.findAll();
-//        }
-//
-//        // ADMIN / HR → only own tenant users
-//        return userRepository.findByTenantId(tenantId);
-//    }
+    private final UserMapper userMapper;
 
     @Transactional
     public void createHrUser(CreateHrUserRequest request) {
@@ -66,26 +55,11 @@ public class UserService {
 
         Long tenantId = TenantContext.getTenantId();
 
-        List<User> users;
+        List<User> users = (tenantId == null)
+                ? userRepository.findAll()
+                : userRepository.findByTenantId(tenantId);
 
-        if (tenantId == null) {
-            // SUPERUSER → see all users
-            users = userRepository.findAll();
-        } else {
-            // ADMIN → only tenant users
-            users = userRepository.findByTenantId(tenantId);
-        }
-
-        return users.stream()
-                .map(user -> new UserResponse(
-                        user.getId(),
-                        user.getEmail(),
-                        user.getRole(),
-                        user.isDisabled(),
-                        user.getTenant() != null ? user.getTenant().getId() : null,
-                        user.getCreatedAt()
-                ))
-                .toList();
+        return userMapper.toResponseList(users);
     }
 
 }

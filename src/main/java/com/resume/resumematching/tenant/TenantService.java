@@ -4,6 +4,7 @@ import com.resume.resumematching.context.TenantContext;
 import com.resume.resumematching.tenant.dto.CreateTenantRequest;
 import com.resume.resumematching.tenant.dto.TenantResponse;
 import com.resume.resumematching.tenant.entity.Tenant;
+import com.resume.resumematching.tenant.mapper.TenantMapper;
 import com.resume.resumematching.user.entity.User;
 import com.resume.resumematching.enums.Role;
 import com.resume.resumematching.enums.TenantStatus;
@@ -22,16 +23,15 @@ public class TenantService {
     private final TenantRepository tenantRepository;
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final TenantMapper tenantMapper;
 
     @Transactional
-    public Tenant createTenantWithAdmin(CreateTenantRequest request) {
+    public TenantResponse createTenantWithAdmin(CreateTenantRequest request) {
 
-        // SUPERUSER only
         if (TenantContext.getTenantId() != null) {
             throw new RuntimeException("Only SUPERUSER can create tenants");
         }
 
-        // Duplicate checks
         if (tenantRepository.existsByName(request.getTenantName())) {
             throw new RuntimeException("Tenant already exists");
         }
@@ -40,7 +40,6 @@ public class TenantService {
             throw new RuntimeException("Admin email already in use");
         }
 
-        // Create tenant
         Tenant tenant = Tenant.builder()
                 .name(request.getTenantName())
                 .status(TenantStatus.ACTIVE)
@@ -48,7 +47,6 @@ public class TenantService {
 
         tenantRepository.save(tenant);
 
-        // Create admin
         User admin = User.builder()
                 .email(request.getAdminEmail())
                 .passwordHash(passwordEncoder.encode(request.getAdminPassword()))
@@ -59,20 +57,19 @@ public class TenantService {
 
         userRepository.save(admin);
 
-        return tenant;
+        return tenantMapper.toResponse(tenant);
     }
 
+    public List<TenantResponse> getAllActiveTenants() {
 
-    public List<Tenant> getAllActiveTenants() {
-
-        // SUPERUSER only
         if (TenantContext.getTenantId() != null) {
             throw new RuntimeException("Access denied");
         }
 
-        return tenantRepository.findAllByStatus(TenantStatus.ACTIVE);
+        return tenantMapper.toResponseList(
+                tenantRepository.findAllByStatus(TenantStatus.ACTIVE)
+        );
     }
-
 
     public void suspendTenant(Long tenantId) {
         Tenant tenant = tenantRepository.findById(tenantId)
@@ -91,15 +88,6 @@ public class TenantService {
     }
 
     public List<TenantResponse> getAllTenants() {
-        return tenantRepository.findAll()
-                .stream()
-                .map(tenant -> new TenantResponse(
-                        tenant.getId(),
-                        tenant.getName(),
-                        tenant.getStatus().name(),
-                        tenant.getCreatedAt().toString()
-                ))
-                .toList();
+        return tenantMapper.toResponseList(tenantRepository.findAll());
     }
-
 }
