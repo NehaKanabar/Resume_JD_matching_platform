@@ -19,9 +19,9 @@ public class UsageService {
     public UsageResponse getCurrentUsage() {
 
         Long tenantId = TenantContext.getTenantId();
-        if (tenantId == null) {
-            throw new RuntimeException("Superuser must specify tenant");
-        }
+//        if (tenantId == null) {
+//            throw new RuntimeException("Superuser must specify tenant");
+//        }
 
         Subscription sub = subscriptionService.getActiveSubscription(tenantId);
 

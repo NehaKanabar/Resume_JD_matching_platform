@@ -24,18 +24,10 @@ public class PlanService {
             throw new RuntimeException("Plan with same name already exists");
         }
 
-        Plan plan = Plan.builder()
-                .name(request.getName())
-                .resumeLimit(request.getResumeLimit())
-                .jdLimit(request.getJdLimit())
-                .matchLimit(request.getMatchLimit())
-                .priceMonthly(request.getPriceMonthly())
-                .priceYearly(request.getPriceYearly())
-                .build();
+        Plan plan = planMapper.toEntity(request);
 
         Plan saved = planRepository.save(plan);
 
-        // ✅ MapStruct here
         return planMapper.toResponse(saved);
     }
 
@@ -49,15 +41,10 @@ public class PlanService {
         Plan plan = planRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Plan not found"));
 
-        plan.setResumeLimit(request.getResumeLimit());
-        plan.setJdLimit(request.getJdLimit());
-        plan.setMatchLimit(request.getMatchLimit());
-        plan.setPriceMonthly(request.getPriceMonthly());
-        plan.setPriceYearly(request.getPriceYearly());
+        planMapper.updatePlanFromRequest(request, plan);
 
         Plan updated = planRepository.save(plan);
 
-        // ✅ MapStruct here
         return planMapper.toResponse(updated);
     }
 }

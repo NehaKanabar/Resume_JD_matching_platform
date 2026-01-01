@@ -83,6 +83,10 @@ public class TenantService {
         Tenant tenant = tenantRepository.findById(tenantId)
                 .orElseThrow(() -> new RuntimeException("Tenant not found"));
 
+        if (tenant.getStatus() == TenantStatus.DELETED) {
+            throw new RuntimeException("Tenant already deleted");
+        }
+
         tenant.setStatus(TenantStatus.DELETED);
         tenantRepository.save(tenant);
     }

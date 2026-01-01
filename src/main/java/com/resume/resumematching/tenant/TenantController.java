@@ -69,12 +69,12 @@ public class TenantController {
         );
     }
 
-    // SUPERUSER → View all tenants
+    // SUPERUSER → View all active tenants
     @GetMapping
     @PreAuthorize("hasRole('SUPERUSER')")
-    public ResponseEntity<ApiResponse<List<TenantResponse>>> getAllTenants() {
+    public ResponseEntity<ApiResponse<List<TenantResponse>>> getAllActiveTenants() {
 
-        List<TenantResponse> tenants = tenantService.getAllTenants();
+        List<TenantResponse> tenants = tenantService.getAllActiveTenants();
 
         return ResponseEntity.ok(
                 ApiResponse.success(

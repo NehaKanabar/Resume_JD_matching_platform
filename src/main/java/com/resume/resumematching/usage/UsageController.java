@@ -15,9 +15,8 @@ public class UsageController {
     private final UsageService usageService;
 
     // ADMIN → own tenant usage
-    // SUPERUSER → any tenant usage (based on context)
     @GetMapping
-    @PreAuthorize("hasAnyRole('ADMIN','SUPERUSER')")
+    @PreAuthorize("hasRole('ADMIN')")
     public ResponseEntity<ApiResponse<UsageResponse>> getUsage() {
 
         UsageResponse usage = usageService.getCurrentUsage();
