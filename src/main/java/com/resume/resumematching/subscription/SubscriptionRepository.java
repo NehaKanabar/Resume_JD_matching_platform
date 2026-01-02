@@ -1,5 +1,7 @@
 package com.resume.resumematching.subscription;
 
+import com.resume.resumematching.enums.PlanStatus;
+import com.resume.resumematching.plan.entity.Plan;
 import com.resume.resumematching.subscription.entity.Subscription;
 import com.resume.resumematching.enums.SubscriptionStatus;
 import org.springframework.data.jpa.repository.JpaRepository;

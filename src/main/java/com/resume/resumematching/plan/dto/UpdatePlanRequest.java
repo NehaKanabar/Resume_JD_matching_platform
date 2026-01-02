@@ -12,17 +12,15 @@ import java.math.BigDecimal;
 public class UpdatePlanRequest {
 
     @Min(1)
-    private int resumeLimit;
+    private Integer resumeLimit;
 
     @Min(1)
-    private int jdLimit;
+    private Integer jdLimit;
 
     @Min(1)
-    private int matchLimit;
+    private  Integer matchLimit;
 
-    @NotNull
     private BigDecimal priceMonthly;
 
-    @NotNull
     private BigDecimal priceYearly;
 }

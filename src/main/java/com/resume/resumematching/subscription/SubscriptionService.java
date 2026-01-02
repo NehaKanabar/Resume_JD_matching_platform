@@ -1,10 +1,12 @@
 package com.resume.resumematching.subscription;
 
 import com.resume.resumematching.context.TenantContext;
+import com.resume.resumematching.enums.PlanStatus;
 import com.resume.resumematching.invoice.InvoiceRepository;
 import com.resume.resumematching.invoice.entity.Invoice;
 import com.resume.resumematching.plan.PlanRepository;
 import com.resume.resumematching.plan.entity.Plan;
+import com.resume.resumematching.security.SecurityUtils;
 import com.resume.resumematching.subscription.dto.CreateSubscriptionRequest;
 import com.resume.resumematching.subscription.dto.SubscriptionResponse;
 import com.resume.resumematching.enums.BillingCycle;
@@ -33,29 +35,26 @@ public class SubscriptionService {
     private final UsageCounterRepository usageCounterRepository;
     private final InvoiceRepository invoiceRepository;
 
+    @Transactional
     public SubscriptionResponse createSubscription(CreateSubscriptionRequest request) {
 
         Long tenantId = TenantContext.getTenantId();
-        if (tenantId == null) {
+
+        if (SecurityUtils.isSuperUser()) {
             throw new RuntimeException("Superuser cannot subscribe to plans");
         }
-
-//        // ROLE CHECK — ADMIN ONLY
-//        if (!SecurityContextHolder.getContext()
-//                .getAuthentication()
-//                .getAuthorities()
-//                .contains(new SimpleGrantedAuthority("ROLE_ADMIN"))) {
-//
-//            throw new RuntimeException("Only ADMIN can subscribe to a plan");
-//        }
 
         Tenant tenant = tenantRepository.findById(tenantId)
                 .orElseThrow(() -> new RuntimeException("Tenant not found"));
 
-        Plan plan = planRepository.findById(request.getPlanId())
-                .orElseThrow(() -> new RuntimeException("Plan not found"));
+        // ONLY ACTIVE PLAN CAN BE SUBSCRIBED
+        Plan plan = planRepository
+                .findByIdAndStatus(request.getPlanId(), PlanStatus.ACTIVE)
+                .orElseThrow(() ->
+                        new RuntimeException("Selected plan is not active")
+                );
 
-        // Expire existing active subscription
+        // Expire existing active subscription (if any)
         subscriptionRepository
                 .findByTenantIdAndStatus(tenantId, SubscriptionStatus.ACTIVE)
                 .ifPresent(existing -> {
@@ -91,7 +90,7 @@ public class SubscriptionService {
 
         usageCounterRepository.save(usage);
 
-        // CREATE FIRST INVOICE
+        // Create invoice
         BigDecimal amount = request.getBillingCycle() == BillingCycle.YEARLY
                 ? plan.getPriceYearly()
                 : plan.getPriceMonthly();
@@ -109,15 +108,15 @@ public class SubscriptionService {
         return new SubscriptionResponse(
                 savedSubscription.getId(),
                 tenantId,
-                plan.getName(),
+                plan.getName() + " v" + plan.getVersion(),
                 savedSubscription.getStatus(),
                 savedSubscription.getStartDate(),
                 savedSubscription.getEndDate()
         );
     }
 
-     //  FETCH ACTIVE SUBSCRIPTION (USAGE CHECKS)
 
+    //  FETCH ACTIVE SUBSCRIPTION
     public Subscription getActiveSubscription(Long tenantId) {
 
         Subscription subscription = subscriptionRepository

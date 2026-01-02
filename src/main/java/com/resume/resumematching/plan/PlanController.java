@@ -19,53 +19,65 @@ public class PlanController {
 
     private final PlanService planService;
 
-    // SUPERUSER → Create plan
+    // SUPERUSER → Create plan (DRAFT)
     @PreAuthorize("hasRole('SUPERUSER')")
     @PostMapping
     public ResponseEntity<ApiResponse<PlanResponse>> createPlan(
             @Valid @RequestBody CreatePlanRequest request
     ) {
-
-        PlanResponse plan = planService.createPlan(request);
-
         return ResponseEntity.ok(
                 ApiResponse.success(
-                        "Plan created successfully",
-                        plan
+                        "Plan created in draft state",
+                        planService.createPlan(request)
                 )
         );
     }
 
-    // ADMIN + SUPERUSER → View plans
+    // SUPERUSER → View ALL plans
+    // ADMIN → View ONLY ACTIVE plans
     @PreAuthorize("hasAnyRole('ADMIN','SUPERUSER')")
     @GetMapping
     public ResponseEntity<ApiResponse<List<PlanResponse>>> getAllPlans() {
-
-        List<PlanResponse> plans = planService.getAllPlans();
-
         return ResponseEntity.ok(
                 ApiResponse.success(
                         "Plans fetched successfully",
-                        plans
+                        planService.getPlansForCurrentUser()
                 )
         );
     }
 
-    // SUPERUSER → Update plan
+    // SUPERUSER → Update ONLY DRAFT plan
     @PreAuthorize("hasRole('SUPERUSER')")
     @PutMapping("/{planId}")
     public ResponseEntity<ApiResponse<PlanResponse>> updatePlan(
-            @PathVariable("planId") Long planId,
+            @PathVariable Long planId,
             @Valid @RequestBody UpdatePlanRequest request
     ) {
-
-        PlanResponse plan = planService.updatePlan(planId, request);
-
         return ResponseEntity.ok(
                 ApiResponse.success(
                         "Plan updated successfully",
-                        plan
+                        planService.updatePlan(planId, request)
                 )
+        );
+    }
+
+    // SUPERUSER → Publish plan (DRAFT → ACTIVE)
+    @PreAuthorize("hasRole('SUPERUSER')")
+    @PatchMapping("/{planId}/publish")
+    public ResponseEntity<ApiResponse<Void>> publishPlan(@PathVariable Long planId) {
+        planService.publishPlan(planId);
+        return ResponseEntity.ok(
+                ApiResponse.success("Plan published successfully", null)
+        );
+    }
+
+    // SUPERUSER → Pause plan (ACTIVE → PAUSED)
+    @PreAuthorize("hasRole('SUPERUSER')")
+    @PatchMapping("/{planId}/pause")
+    public ResponseEntity<ApiResponse<Void>> pausePlan(@PathVariable Long planId) {
+        planService.pausePlan(planId);
+        return ResponseEntity.ok(
+                ApiResponse.success("Plan paused successfully", null)
         );
     }
 }

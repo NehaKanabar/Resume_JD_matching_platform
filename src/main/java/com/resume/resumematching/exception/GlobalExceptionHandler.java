@@ -118,6 +118,8 @@ public class GlobalExceptionHandler {
             throw new RuntimeException(ex);
         }
 
+        ex.printStackTrace();
+
         return ResponseEntity.status(500).body(
                 ApiResponse.failure(
                         "Internal server error",

@@ -30,18 +30,27 @@ CREATE TABLE users (
 
 CREATE TABLE plan (
     id BIGSERIAL PRIMARY KEY,
-    name VARCHAR(100) NOT NULL UNIQUE,
+
+    name VARCHAR(100) NOT NULL,
+    version INT NOT NULL,
+
     resume_limit INT NOT NULL,
     jd_limit INT NOT NULL,
     match_limit INT NOT NULL,
+
     price_monthly NUMERIC(10,2) NOT NULL,
     price_yearly NUMERIC(10,2) NOT NULL,
 
-    created_at TIMESTAMP,
+    status VARCHAR(20) NOT NULL,
+
+    created_at TIMESTAMP NOT NULL,
     updated_at TIMESTAMP,
     created_by VARCHAR(255),
-    updated_by VARCHAR(255)
+    updated_by VARCHAR(255),
+
+    CONSTRAINT uk_plan_name_version UNIQUE (name, version)
 );
+
 
 CREATE TABLE subscription (
     id BIGSERIAL PRIMARY KEY,
